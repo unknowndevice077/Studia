@@ -1,16 +1,13 @@
-# app
+Your personal Student Assistant that helps with your studies
 
-A new Flutter project.
+This app includes
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-Managable Class Schedules
+-Notifications for Upcoming Classes
+-Real Time Updates on Classes
+-Managable Files for each classes
+-Pomodoro Timer
+-Event Reminder(School Events)
+-Personalizable Profile
+-AI Assistant Chatbot
+-AI Quiz Maker(is able to transcribe and make a personalized quiz for your chosen subject files)
