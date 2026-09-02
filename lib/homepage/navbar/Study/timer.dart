@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:app/theme/responsive.dart';
 
 // Study Timer Page with a simple start/stop timer
@@ -43,6 +44,10 @@ class _StudyTimerPageState extends State<StudyTimerPage>
   late Animation<double> _pulseAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _ballAnimation; // New animation for the ball
+
+  // Plays an actual alarm sound (looped, like a real alarm clock) when the
+  // focus session ends, until the user dismisses the completion dialog.
+  final AudioPlayer _alarmPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -147,6 +152,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
           _pulseController.stop();
           _ballController.stop(); // Stop ball animation
           _saveStudySession(); // Save when timer completes naturally
+          _playAlarm();
           _showCompletionDialog();
         } else if (_seconds == 0) {
           _minutes--;
@@ -189,6 +195,23 @@ class _StudyTimerPageState extends State<StudyTimerPage>
 
     // Save progress when pausing
     _saveStudySession();
+  }
+
+  Future<void> _playAlarm() async {
+    try {
+      await _alarmPlayer.setReleaseMode(ReleaseMode.loop);
+      await _alarmPlayer.play(AssetSource('alarms/alarm.mp3'));
+    } catch (e) {
+      print('Error playing alarm sound: $e');
+    }
+  }
+
+  Future<void> _stopAlarm() async {
+    try {
+      await _alarmPlayer.stop();
+    } catch (e) {
+      print('Error stopping alarm sound: $e');
+    }
   }
 
   void _showCompletionDialog() {
@@ -246,6 +269,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                       ),
                     ),
                     onPressed: () {
+                      _stopAlarm();
                       Navigator.pop(context);
                       _resetTimer();
                     },
@@ -788,6 +812,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
     _pulseController.dispose();
     _scaleController.dispose();
     _ballController.dispose();
+    _alarmPlayer.dispose();
     super.dispose();
   }
 

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/services/gemini_service.dart';
 import 'package:app/theme/responsive.dart';
@@ -14,15 +16,131 @@ class AskAiScreen extends StatefulWidget {
 class _AskAiScreenState extends State<AskAiScreen> {
   final List<_ChatMessage> _messages = [];
   final TextEditingController _controller = TextEditingController();
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  // Reassigned (not final) so clearing history can force a fresh
+  // AnimatedList element instead of manually replaying removeItem calls.
+  GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   bool _isSending = false;
   bool _isTyping = false;
   String _typingText = "";
   bool _skipTyping = false;
+  bool _isLoadingHistory = true;
+
+  // Most recent N messages are loaded on open; older history stays in
+  // Firestore but isn't fetched, to keep the initial load fast.
+  static const int _historyLimit = 200;
+
+  CollectionReference<Map<String, dynamic>>? _historyRef;
+
+  @override
+  void initState() {
+    super.initState();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      _historyRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('aiChatMessages');
+    }
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final ref = _historyRef;
+    if (ref == null) {
+      setState(() => _isLoadingHistory = false);
+      return;
+    }
+    try {
+      final snapshot = await ref.orderBy('timestamp', descending: true).limit(_historyLimit).get();
+      final loaded = snapshot.docs.reversed.map((doc) {
+        final data = doc.data();
+        return _ChatMessage(
+          text: data['text'] as String? ?? '',
+          isUser: data['isUser'] as bool? ?? false,
+        );
+      }).toList();
+      if (!mounted) return;
+      setState(() {
+        _messages.addAll(loaded);
+        _isLoadingHistory = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoadingHistory = false);
+    }
+  }
+
+  Future<void> _persistMessage(_ChatMessage message) async {
+    final ref = _historyRef;
+    if (ref == null) return;
+    try {
+      await ref.add({
+        'text': message.text,
+        'isUser': message.isUser,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      // Chat still works locally for this session even if a write fails
+      // (e.g. offline) — just don't block on it.
+      print('Error saving chat message: $e');
+    }
+  }
+
+  Future<void> _clearHistory() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        title: const Text('Clear chat history?', style: TextStyle(color: Colors.white)),
+        content: const Text(
+          'This deletes your saved conversation with the AI. This can\'t be undone.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    setState(() {
+      _messages.clear();
+      // A fresh key makes Flutter mount a brand new AnimatedList element
+      // (initialItemCount 0) instead of trying to reconcile item indices
+      // against the old one.
+      _listKey = GlobalKey<AnimatedListState>();
+    });
+
+    final ref = _historyRef;
+    if (ref == null) return;
+    try {
+      final snapshot = await ref.get();
+      final batch = FirebaseFirestore.instance.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error clearing history: $e')),
+        );
+      }
+    }
+  }
 
   void _addMessage(_ChatMessage message) {
     _messages.add(message);
     _listKey.currentState?.insertItem(_messages.length - 1, duration: const Duration(milliseconds: 350));
+    _persistMessage(message);
   }
 
   Future<void> _sendMessage() async {
@@ -103,11 +221,23 @@ class _AskAiScreenState extends State<AskAiScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         elevation: 0.5,
+        actions: [
+          if (_messages.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Clear chat history',
+              onPressed: _clearHistory,
+            ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: _messages.isEmpty && !_isTyping
+            child: _isLoadingHistory
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.white54),
+                  )
+                : _messages.isEmpty && !_isTyping
                 ? Center(
                     child: Text(
                       "What can I help you with?",
