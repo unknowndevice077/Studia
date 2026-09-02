@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -248,7 +249,11 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
             padding: EdgeInsets.symmetric(
               horizontal: isVerySmallScreen ? 24.0 : 32.0,
             ),
-            child: ConstrainedBox(
+            // Cap the form width and center it so the register screen
+            // doesn't stretch full-bleed across tablet/desktop viewports.
+            child: ResponsiveContent(
+              maxWidth: 440,
+              child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: size.height - MediaQuery.of(context).padding.top,
               ),
@@ -509,6 +514,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                     ),
                   ],
                 ),
+              ),
               ),
             ),
           ),

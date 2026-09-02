@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'forget_password_screen.dart'; // ✅ Add this import
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
@@ -117,7 +118,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: SizedBox(
+            // Cap the form width and center it so the login screen doesn't
+            // stretch full-bleed across tablet/desktop viewports.
+            child: ResponsiveContent(
+              maxWidth: 440,
+              child: SizedBox(
               height: size.height - MediaQuery.of(context).padding.top,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,6 +305,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   
                   const SizedBox(height: 32),
                 ],
+              ),
               ),
             ),
           ),

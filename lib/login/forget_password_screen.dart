@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -100,7 +101,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: SizedBox(
+              // Cap the form width and center it so this screen doesn't
+              // stretch full-bleed across tablet/desktop viewports.
+              child: ResponsiveContent(
+                maxWidth: 440,
+                child: SizedBox(
                 height: size.height - MediaQuery.of(context).padding.top,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,6 +472,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                     
                     const SizedBox(height: 32),
                   ],
+                ),
                 ),
               ),
             ),
