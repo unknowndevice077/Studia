@@ -109,6 +109,51 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
+  // Lets a visitor (e.g. someone trying the live portfolio demo) in without
+  // creating a real account. Firebase's anonymous auth gives each guest their
+  // own unique uid, and Firestore's rules scope every document under
+  // users/{uid} — so guests are fully isolated from each other and from real
+  // accounts automatically, with zero extra backend work.
+  Future<void> _continueAsGuest() async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      final user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'isGuest': true,
+          'lastLogin': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.code == 'operation-not-allowed'
+              ? 'Guest access isn\'t enabled right now — please sign in instead.'
+              : 'Couldn\'t start a guest session. Please try again.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Couldn\'t start a guest session. Please try again.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -275,6 +320,30 @@ class _LoginScreenState extends State<LoginScreen>
                             onPressed: _isLoading ? null : _signIn,
                             isLoading: _isLoading,
                             text: 'Sign In',
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Guest access — each session gets its own isolated
+                          // anonymous account, safe for multiple people trying
+                          // the app at once (e.g. from the portfolio demo).
+                          Center(
+                            child: TextButton(
+                              onPressed: _isLoading ? null : _continueAsGuest,
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              ),
+                              child: Text(
+                                'Continue as Guest',
+                                style: TextStyle(
+                                  color: context.scheme.onSurfaceVariant,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: context.scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
