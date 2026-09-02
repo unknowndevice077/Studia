@@ -402,7 +402,7 @@ class _EventsState extends State<Events> {
       eventLoader: _getEventsForDay,
       calendarStyle: CalendarStyle(
         todayDecoration: BoxDecoration(
-          color: Colors.blueAccent.withOpacity(0.2),
+          color: Colors.blueAccent.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(
@@ -515,7 +515,7 @@ class _EventsState extends State<Events> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: iconColor!.withOpacity(0.15),
+                        backgroundColor: iconColor!.withValues(alpha: 0.15),
                         child: Icon(iconData, color: iconColor),
                       ),
                       title: Text(
@@ -528,7 +528,7 @@ class _EventsState extends State<Events> {
                       subtitle: Text(
                         event['classTitle'] ?? '',
                         style: TextStyle(
-                          color: textColor?.withOpacity(0.7),
+                          color: textColor?.withValues(alpha: 0.7),
                         ),
                       ),
                       trailing: (_editMode && event['type'] != 'class')
@@ -637,7 +637,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
                   }
                   
                   return DropdownButtonFormField<String>(
-                    value: _selectedClassId,
+                    initialValue: _selectedClassId,
                     decoration: const InputDecoration(
                       labelText: 'Select Subject',
                       prefixIcon: Icon(Icons.book),
@@ -665,7 +665,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
 
               // ✅ Event Type Selection
               DropdownButtonFormField<String>(
-                value: _eventType.isEmpty ? null : _eventType,
+                initialValue: _eventType.isEmpty ? null : _eventType,
                 decoration: const InputDecoration(
                   labelText: 'Event Type',
                   prefixIcon: Icon(Icons.category),
@@ -747,10 +747,10 @@ class _AddEventDialogState extends State<AddEventDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _getEventColor(_eventType).withOpacity(0.1),
+                    color: _getEventColor(_eventType).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: _getEventColor(_eventType).withOpacity(0.3),
+                      color: _getEventColor(_eventType).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -935,7 +935,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                value: _eventType.isEmpty ? null : _eventType,
+                initialValue: _eventType.isEmpty ? null : _eventType,
                 decoration: const InputDecoration(
                   labelText: 'Event Type',
                   prefixIcon: Icon(Icons.category),

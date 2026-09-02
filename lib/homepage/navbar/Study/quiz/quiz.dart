@@ -63,7 +63,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                     'id': doc.id,
                     'title': doc.data()['title'] ?? 'Unknown Subject',
                     'color':
-                        doc.data()['color'] ?? context.scheme.primary.value,
+                        doc.data()['color'] ?? context.scheme.primary.toARGB32(),
                     'teacher': doc.data()['teacher'] ?? '',
                     'location': doc.data()['location'] ?? '',
                   },
@@ -201,7 +201,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                           width: isTablet ? 120 : 100,
                           height: isTablet ? 120 : 100,
                           decoration: BoxDecoration(
-                            color: context.scheme.primary.withOpacity(0.05),
+                            color: context.scheme.primary.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -319,10 +319,10 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                           padding: EdgeInsets.all(isTablet ? 16 : 12),
                           margin: EdgeInsets.only(bottom: isTablet ? 16 : 12),
                           decoration: BoxDecoration(
-                            color: selectedSubjectColor!.withOpacity(0.1),
+                            color: selectedSubjectColor!.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedSubjectColor.withOpacity(0.3),
+                              color: selectedSubjectColor.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -392,7 +392,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                               ),
                             ),
                             elevation: _selectedSubjectId != null ? 5 : 0,
-                            shadowColor: selectedSubjectColor?.withOpacity(0.3),
+                            shadowColor: selectedSubjectColor?.withValues(alpha: 0.3),
                           ),
                           onPressed:
                               _selectedSubjectId != null ? _startQuiz : null,
@@ -560,7 +560,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
     
     if (isLight) {
       // For light colors, use a darker version or fallback to dark blue
-      return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
+      return subjectColor == Colors.white || subjectColor.toARGB32() == 0xFFFFFFFF
           ? context.scheme.primary // Blue for pure white
           : HSLColor.fromColor(subjectColor).withLightness(0.3).toColor(); // Darker version
     } else {
@@ -573,7 +573,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
     final isLight = _isLightColor(subjectColor);
     
     if (isLight) {
-      return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
+      return subjectColor == Colors.white || subjectColor.toARGB32() == 0xFFFFFFFF
           ? context.scheme.primary // Blue for pure white
           : HSLColor.fromColor(subjectColor).withLightness(0.4).toColor(); // Darker version
     } else {
@@ -603,7 +603,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
       } else {
         // Dark subject color + selected = use subject color
         titleColor = subjectColor;
-        teacherColor = subjectColor.withOpacity(0.8);
+        teacherColor = subjectColor.withValues(alpha: 0.8);
       }
     } else {
       // When not selected, use default colors
@@ -623,7 +623,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
         child: Container(
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? (isLightSubjectColor ? context.scheme.surfaceContainer : subjectColor.withOpacity(0.05))
+                ? (isLightSubjectColor ? context.scheme.surfaceContainer : subjectColor.withValues(alpha: 0.05))
                 : context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
             border: Border.all(
@@ -633,7 +633,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
             boxShadow: [
               BoxShadow(
                 color: widget.isSelected
-                    ? borderColor.withOpacity(0.3) // Use border color for shadow
+                    ? borderColor.withValues(alpha: 0.3) // Use border color for shadow
                     : context.colors.shadow,
                 blurRadius: widget.isSelected ? 15 : 8,
                 offset: const Offset(0, 4),
@@ -653,7 +653,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
                       width: isTablet ? 64 : 56,
                       height: isTablet ? 64 : 56,
                       decoration: BoxDecoration(
-                        color: indicatorColor.withOpacity(0.1),
+                        color: indicatorColor.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: indicatorColor,
@@ -679,7 +679,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
                             border: Border.all(color: Colors.white, width: 3),
                             boxShadow: [
                               BoxShadow(
-                                color: indicatorColor.withOpacity(0.4),
+                                color: indicatorColor.withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -744,7 +744,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: indicatorColor.withOpacity(0.3),
+                          color: indicatorColor.withValues(alpha: 0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -1048,7 +1048,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                               Container(
                                 padding: EdgeInsets.all(isTablet ? 12 : 10),
                                 decoration: BoxDecoration(
-                                  color: subjectColor.withOpacity(0.1),
+                                  color: subjectColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
@@ -1121,7 +1121,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                                                 ? [
                                                   BoxShadow(
                                                     color: subjectColor
-                                                        .withOpacity(0.3),
+                                                        .withValues(alpha: 0.3),
                                                     blurRadius: 8,
                                                     offset: const Offset(0, 4),
                                                   ),
@@ -1147,10 +1147,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                           Container(
                             padding: EdgeInsets.all(isTablet ? 16 : 12),
                             decoration: BoxDecoration(
-                              color: subjectColor.withOpacity(0.1),
+                              color: subjectColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: subjectColor.withOpacity(0.3),
+                                color: subjectColor.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -1255,10 +1255,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                           padding: EdgeInsets.all(isTablet ? 16 : 12),
                           margin: EdgeInsets.only(bottom: isTablet ? 16 : 12),
                           decoration: BoxDecoration(
-                            color: subjectColor.withOpacity(0.1),
+                            color: subjectColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: subjectColor.withOpacity(0.3),
+                              color: subjectColor.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -1443,7 +1443,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
     final isLight = _isLightColor(subjectColor);
     
     if (isLight) {
-      return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
+      return subjectColor == Colors.white || subjectColor.toARGB32() == 0xFFFFFFFF
           ? context.scheme.primary
           : HSLColor.fromColor(subjectColor).withLightness(0.4).toColor();
     } else {
@@ -1482,7 +1482,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
           padding: EdgeInsets.all(isTablet ? 24 : 20),
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? (isLightSubjectColor ? context.scheme.surfaceContainer : widget.subjectColor.withOpacity(0.05))
+                ? (isLightSubjectColor ? context.scheme.surfaceContainer : widget.subjectColor.withValues(alpha: 0.05))
                 : context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
             border: Border.all(
@@ -1492,7 +1492,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
             boxShadow: [
               BoxShadow(
                 color: widget.isSelected
-                    ? contrastingColor.withOpacity(0.3)
+                    ? contrastingColor.withValues(alpha: 0.3)
                     : context.colors.shadow,
                 blurRadius: widget.isSelected ? 12 : 8,
                 offset: const Offset(0, 4),
@@ -1514,7 +1514,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: widget.isSelected ? [
                     BoxShadow(
-                      color: contrastingColor.withOpacity(0.3),
+                      color: contrastingColor.withValues(alpha: 0.3),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),

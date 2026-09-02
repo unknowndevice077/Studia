@@ -13,7 +13,7 @@ class NotificationTestPage extends StatefulWidget {
 
 class _NotificationTestPageState extends State<NotificationTestPage> {
   bool _isLoading = false;
-  List<String> _testResults = [];
+  final List<String> _testResults = [];
   int _backgroundTestDelay = 15; // seconds
   
   @override

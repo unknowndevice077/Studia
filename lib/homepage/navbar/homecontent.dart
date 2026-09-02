@@ -734,7 +734,7 @@ class _HomecontentState extends State<Homecontent> {
                     location: data['location'] ?? '',
                     teacher: data['teacher'] ?? '',
                     notes: data['notes'] ?? '',
-                    color: Color(data['color'] ?? Colors.white.value),
+                    color: Color(data['color'] ?? Colors.white.toARGB32()),
                     days:
                         data['days'] != null
                             ? List<String>.from(data['days'])
@@ -790,7 +790,7 @@ class _HomecontentState extends State<Homecontent> {
                                     width: 8,
                                     height: 120,
                                     decoration: BoxDecoration(
-                                      color: classModel.color.withOpacity(0.5),
+                                      color: classModel.color.withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(12),
                                       border:
                                           classModel.color == Colors.white
@@ -817,18 +817,18 @@ class _HomecontentState extends State<Homecontent> {
                                     decoration: BoxDecoration(
                                       color:
                                           isCurrent
-                                              ? classModel.color.withOpacity(
-                                                0.60,
+                                              ? classModel.color.withValues(
+                                                alpha: 0.60,
                                               )
-                                              : (classModel.color.value ==
-                                                      Colors.white.value
+                                              : (classModel.color.toARGB32() ==
+                                                      Colors.white.toARGB32()
                                                   ? Colors.transparent
                                                   : classModel.color
-                                                      .withOpacity(0.10)),
+                                                      .withValues(alpha: 0.10)),
                                       borderRadius: BorderRadius.circular(24),
                                       border:
-                                          classModel.color.value ==
-                                                  Colors.white.value
+                                          classModel.color.toARGB32() ==
+                                                  Colors.white.toARGB32()
                                               ? Border.all(
                                                 color: Colors.black,
                                                 width: 2,
@@ -839,7 +839,7 @@ class _HomecontentState extends State<Homecontent> {
                                               ? [
                                                 BoxShadow(
                                                   color: classModel.color
-                                                      .withOpacity(0.18),
+                                                      .withValues(alpha: 0.18),
                                                   blurRadius: 24,
                                                   offset: const Offset(0, 8),
                                                 ),
@@ -971,11 +971,11 @@ class _HomecontentState extends State<Homecontent> {
                                             : 'Event';
                                     Color cardColor =
                                         event['type'] == 'deadline'
-                                            ? Colors.yellow[600]!.withOpacity(
-                                              0.15,
+                                            ? Colors.yellow[600]!.withValues(
+                                              alpha: 0.15,
                                             )
                                             : event['type'] == 'exam'
-                                            ? Colors.redAccent.withOpacity(0.15)
+                                            ? Colors.redAccent.withValues(alpha: 0.15)
                                             : context.scheme.surfaceContainerHigh;
 
                                     return Container(
@@ -1211,7 +1211,7 @@ class ClassModel {
       'location': location,
       'teacher': teacher,
       'notes': notes,
-      'color': color.value,
+      'color': color.toARGB32(),
       'days': days,
       'notify': notify, // ✅ Add this line
     };
@@ -1224,7 +1224,7 @@ class ClassModel {
       location: data['location'] ?? '',
       teacher: data['teacher'] ?? '',
       notes: data['notes'] ?? '',
-      color: Color(data['color'] ?? Colors.white.value),
+      color: Color(data['color'] ?? Colors.white.toARGB32()),
       days: data['days'] != null ? List<String>.from(data['days']) : <String>[],
       notify: data['notify'] ?? true, // ✅ Add this line
     );
@@ -1264,15 +1264,15 @@ class _StatsCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.22),
+            color.withValues(alpha: 0.22),
             context.scheme.surfaceContainer,
           ],
         ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withOpacity(0.28), width: 1.2),
+        border: Border.all(color: color.withValues(alpha: 0.28), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.28),
+            color: color.withValues(alpha: 0.28),
             blurRadius: 22,
             offset: const Offset(0, 10),
             spreadRadius: -8,
@@ -1450,7 +1450,7 @@ class _StatsCard extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.5),
+                  color: color.withValues(alpha: 0.5),
                   blurRadius: 14,
                   offset: const Offset(0, 5),
                 ),
@@ -1487,15 +1487,15 @@ class _CountCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.22),
+            color.withValues(alpha: 0.22),
             context.scheme.surfaceContainer,
           ],
         ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withOpacity(0.28), width: 1.2),
+        border: Border.all(color: color.withValues(alpha: 0.28), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.28),
+            color: color.withValues(alpha: 0.28),
             blurRadius: 22,
             offset: const Offset(0, 10),
             spreadRadius: -8,
@@ -1554,7 +1554,7 @@ class _CountCard extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.5),
+                  color: color.withValues(alpha: 0.5),
                   blurRadius: 14,
                   offset: const Offset(0, 5),
                 ),
@@ -1583,9 +1583,9 @@ class _EventCard extends StatelessWidget {
 
     Color cardColor = context.scheme.surfaceContainerHigh;
     if (label == 'Exam') {
-      cardColor = Colors.redAccent.withOpacity(0.15);
+      cardColor = Colors.redAccent.withValues(alpha: 0.15);
     } else if (label == 'Deadline') {
-      cardColor = Colors.yellow[600]!.withOpacity(0.15);
+      cardColor = Colors.yellow[600]!.withValues(alpha: 0.15);
     }
 
     return Card(

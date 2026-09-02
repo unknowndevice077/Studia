@@ -36,7 +36,7 @@ class _QuizOverviewScreenState extends State<QuizOverviewScreen>
 
   // Get subject color
   Color get subjectColor => Color(widget.subject['color']);
-  Color get subjectColorLight => subjectColor.withOpacity(0.1);
+  Color get subjectColorLight => subjectColor.withValues(alpha: 0.1);
 
   @override
   void initState() {
@@ -158,12 +158,12 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
         color: Colors.white,
         borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
         border: Border.all(
-          color: isCorrect ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+          color: isCorrect ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isCorrect ? Colors.green : Colors.red).withOpacity(0.1),
+            color: (isCorrect ? Colors.green : Colors.red).withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -379,7 +379,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.blue.withOpacity(0.3),
+                        color: Colors.blue.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -492,7 +492,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [subjectColor, subjectColor.withOpacity(0.8)],
+            colors: [subjectColor, subjectColor.withValues(alpha: 0.8)],
           ),
         ),
         child: SafeArea(
@@ -542,11 +542,11 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
                   padding: EdgeInsets.symmetric(horizontal: isTablet ? 32 : 16),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.10),
+                      color: Colors.white.withValues(alpha: 0.10),
                       borderRadius: BorderRadius.circular(isTablet ? 28 : 20),
                       boxShadow: [
                         BoxShadow(
-                          color: subjectColor.withOpacity(0.08),
+                          color: subjectColor.withValues(alpha: 0.08),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -561,7 +561,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
                             Container(
                               padding: EdgeInsets.all(isTablet ? 18 : 12),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.18),
+                                color: Colors.white.withValues(alpha: 0.18),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -587,7 +587,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
                                     '$percentage% • ${_formatDuration(widget.totalTime)}',
                                     style: GoogleFonts.inter(
                                       fontSize: isTablet ? 16 : 13,
-                                      color: Colors.white.withOpacity(0.92),
+                                      color: Colors.white.withValues(alpha: 0.92),
                                     ),
                                   ),
                                 ],
@@ -658,10 +658,10 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
     return Container(
       padding: EdgeInsets.all(isTablet ? 16 : 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -680,7 +680,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
             label,
             style: GoogleFonts.inter(
               fontSize: isTablet ? 12 : 10,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],

@@ -229,7 +229,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                         'Notifications cancelled',
                         style: GoogleFonts.inter(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -276,7 +276,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
         'location': result.location,
         'teacher': result.teacher,
         'notes': result.notes,
-        'color': result.color.value,
+        'color': result.color.toARGB32(),
         'days': result.days,
         'notify': result.notify,
       };
@@ -326,7 +326,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                           'Notifications scheduled',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -634,7 +634,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
               location: data['location'] ?? '',
               teacher: data['teacher'] ?? '',
               notes: data['notes'] ?? '',
-              color: Color(data['color'] ?? Colors.white.value),
+              color: Color(data['color'] ?? Colors.white.toARGB32()),
               days: List<String>.from(data['days'] ?? []),
               notify: data['notify'] ?? true,
             );
@@ -879,13 +879,13 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
   // ✅ UPDATED: Better color logic for white/black cards
   Color get _textColor {
     // Handle pure white
-    if (widget.classModel.color.value == Colors.white.value ||
-        widget.classModel.color.value == const Color.fromARGB(255, 255, 255, 255).value) {
+    if (widget.classModel.color.toARGB32() == Colors.white.toARGB32() ||
+        widget.classModel.color.toARGB32() == const Color.fromARGB(255, 255, 255, 255).toARGB32()) {
       return Colors.black;
     }
     // Handle pure black
-    if (widget.classModel.color.value == Colors.black.value ||
-        widget.classModel.color.value == const Color.fromARGB(255, 0, 0, 0).value) {
+    if (widget.classModel.color.toARGB32() == Colors.black.toARGB32() ||
+        widget.classModel.color.toARGB32() == const Color.fromARGB(255, 0, 0, 0).toARGB32()) {
       return Colors.white;
     }
     // For other colors, use brightness detection
@@ -914,7 +914,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: Material(
-        color: _textColor.withOpacity(0.14),
+        color: _textColor.withValues(alpha: 0.14),
         shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
         child: IconButton(
@@ -949,12 +949,12 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
           ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _textColor.withOpacity(0.08),
+            color: _textColor.withValues(alpha: 0.08),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: widget.classModel.color.withOpacity(0.4),
+              color: widget.classModel.color.withValues(alpha: 0.4),
               blurRadius: _isExpanded ? 26 : 16,
               offset: const Offset(0, 10),
               spreadRadius: -6,
@@ -1024,7 +1024,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                   Icon(
                     CupertinoIcons.calendar,
                     size: 18,
-                    color: _iconColor.withOpacity(0.7),
+                    color: _iconColor.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 6),
                   Expanded(
@@ -1035,10 +1035,10 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _textColor.withOpacity(0.15),
+                            color: _textColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: _textColor.withOpacity(0.2),
+                              color: _textColor.withValues(alpha: 0.2),
                               width: 1,
                             ),
                           ),
@@ -1065,14 +1065,14 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                 Icon(
                   CupertinoIcons.time,
                   size: 18,
-                  color: _iconColor.withOpacity(0.7),
+                  color: _iconColor.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     widget.classModel.time,
                     style: GoogleFonts.roboto(
-                      color: _textColor.withOpacity(0.7),
+                      color: _textColor.withValues(alpha: 0.7),
                       fontSize: 15,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -1088,7 +1088,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                 Icon(
                   CupertinoIcons.person,
                   size: 18,
-                  color: _iconColor.withOpacity(0.7),
+                  color: _iconColor.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
                 Flexible(
@@ -1111,7 +1111,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                 Icon(
                   CupertinoIcons.location,
                   size: 18,
-                  color: _iconColor.withOpacity(0.7),
+                  color: _iconColor.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
                 Flexible(
@@ -1131,7 +1131,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
             if (_isExpanded) ...[
               const SizedBox(height: 16),
               Divider(
-                color: _textColor.withOpacity(0.2),
+                color: _textColor.withValues(alpha: 0.2),
               ),
               const SizedBox(height: 8),
               Text(
@@ -1139,7 +1139,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                     ? widget.classModel.notes
                     : 'No notes for this class.',
                 style: GoogleFonts.roboto(
-                  color: _textColor.withOpacity(0.8),
+                  color: _textColor.withValues(alpha: 0.8),
                   fontSize: 15,
                   fontStyle: widget.classModel.notes.isEmpty
                       ? FontStyle.italic
@@ -1610,7 +1610,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   decoration: BoxDecoration(
                     color: context.scheme.primaryContainer,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: context.scheme.primary.withOpacity(0.3)),
+                    border: Border.all(color: context.scheme.primary.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1813,7 +1813,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (iconColor ?? context.scheme.primary).withOpacity(0.1),
+                  color: (iconColor ?? context.scheme.primary).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -1903,7 +1903,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: context.scheme.primary.withOpacity(0.1),
+                    color: context.scheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -2092,12 +2092,12 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           color: isSelected ? context.scheme.primary : context.scheme.surfaceContainer,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? context.scheme.primary : context.scheme.primary.withOpacity(0.4),
+            color: isSelected ? context.scheme.primary : context.scheme.primary.withValues(alpha: 0.4),
             width: 1.5,
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: context.scheme.primary.withOpacity(0.3),
+              color: context.scheme.primary.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -2122,7 +2122,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
       runSpacing: 12,
       children: List.generate(colorOptions.length, (index) {
         final color = colorOptions[index];
-        final isSelected = _selectedColor.value == color.value;
+        final isSelected = _selectedColor.toARGB32() == color.toARGB32();
         
         return GestureDetector(
           onTap: () {
@@ -2143,7 +2143,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   blurRadius: isSelected ? 12 : 6,
                   offset: const Offset(0, 2),
                 ),
@@ -2152,8 +2152,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
             child: isSelected
                 ? Icon(
                     CupertinoIcons.checkmark,
-                    color: color.value == Colors.white.value || 
-                           color.value == const Color.fromARGB(255, 255, 255, 255).value
+                    color: color.toARGB32() == Colors.white.toARGB32() || 
+                           color.toARGB32() == const Color.fromARGB(255, 255, 255, 255).toARGB32()
                         ? Colors.black
                         : Colors.white,
                     size: 20,

@@ -235,7 +235,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: context.scheme.primary.withOpacity(0.08),
+                      color: context.scheme.primary.withValues(alpha: 0.08),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -353,7 +353,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
           boxShadow: [
             if (isSelected) ...[
               BoxShadow(
-                color: context.scheme.primary.withOpacity(0.3),
+                color: context.scheme.primary.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -369,7 +369,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelected ? context.scheme.primary.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? context.scheme.primary.withValues(alpha: 0.1) : Colors.transparent,
         ),
         child: CircleAvatar(
           radius: 28, // ✅ Good size for 4-column grid
@@ -382,7 +382,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             ? Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: context.scheme.primary.withOpacity(0.2),
+                  color: context.scheme.primary.withValues(alpha: 0.2),
                 ),
                 child: Icon(
                   Icons.check,
@@ -421,7 +421,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: context.scheme.primary.withOpacity(0.1),
+                    color: context.scheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -530,7 +530,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: context.scheme.primary.withOpacity(0.1),
+                color: context.scheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -910,11 +910,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                           child: profileProvider.profilePictureWidget ??
                                               CircleAvatar(
                                                 radius: 60,
-                                                backgroundColor: Colors.white.withOpacity(0.2),
+                                                backgroundColor: Colors.white.withValues(alpha: 0.2),
                                                 child: Icon(
                                                   Icons.person,
                                                   size: 48,
-                                                  color: Colors.white.withOpacity(0.8),
+                                                  color: Colors.white.withValues(alpha: 0.8),
                                                 ),
                                               ),
                                         );
@@ -935,7 +935,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
+                                            color: Colors.black.withValues(alpha: 0.08),
                                             blurRadius: 4,
                                             offset: const Offset(0, 2),
                                           ),
@@ -976,7 +976,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                           style: GoogleFonts.inter(
                             fontSize: isTablet ? 14 : 12,
                             fontWeight: FontWeight.w400,
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -1024,9 +1024,9 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: context.colors.success.withOpacity(0.12),
+                          color: context.colors.success.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: context.colors.success.withOpacity(0.4)),
+                          border: Border.all(color: context.colors.success.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           children: [
@@ -1135,10 +1135,10 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                         decoration: BoxDecoration(
                           color: context.scheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: context.colors.danger.withOpacity(0.4)),
+                          border: Border.all(color: context.colors.danger.withValues(alpha: 0.4)),
                           boxShadow: [
                             BoxShadow(
-                              color: context.colors.danger.withOpacity(0.08),
+                              color: context.colors.danger.withValues(alpha: 0.08),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -1156,7 +1156,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: context.colors.danger.withOpacity(0.12),
+                                      color: context.colors.danger.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Icon(

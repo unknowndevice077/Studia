@@ -22,7 +22,7 @@ class NotificationService {
   // ✅ Real-time monitoring variables
   static Timer? _classMonitorTimer;
   static bool _isMonitoring = false;
-  static Set<String> _notifiedClasses = <String>{};
+  static final Set<String> _notifiedClasses = <String>{};
   
   // ✅ COMPLETE: Initialize method
   static Future<void> initialize() async {

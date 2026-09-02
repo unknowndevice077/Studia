@@ -646,9 +646,9 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                       padding: EdgeInsets.all(isTablet ? 20 : 16),
                       margin: EdgeInsets.only(bottom: isTablet ? 20 : 16),
                       decoration: BoxDecoration(
-                        color: context.colors.danger.withOpacity(0.1),
+                        color: context.colors.danger.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: context.colors.danger.withOpacity(0.3)),
+                        border: Border.all(color: context.colors.danger.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
@@ -1019,13 +1019,13 @@ class _MinimalTopicCard extends StatelessWidget {
             color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isEditMode ? context.colors.danger.withOpacity(0.4) : context.scheme.outlineVariant,
+              color: isEditMode ? context.colors.danger.withValues(alpha: 0.4) : context.scheme.outlineVariant,
               width: isEditMode ? 2 : 1,
             ),
             // Add red tint when in edit mode
             boxShadow: isEditMode ? [
               BoxShadow(
-                color: context.colors.danger.withOpacity(0.1),
+                color: context.colors.danger.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: Offset(0, 2),
               ),
@@ -1038,8 +1038,8 @@ class _MinimalTopicCard extends StatelessWidget {
                 height: isTablet ? 48 : 40,
                 decoration: BoxDecoration(
                   color: isEditMode 
-                      ? context.colors.danger.withOpacity(0.1) 
-                      : classColor.withOpacity(0.1),
+                      ? context.colors.danger.withValues(alpha: 0.1) 
+                      : classColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -1830,7 +1830,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
           width: isTablet ? 48 : 40,
           height: isTablet ? 48 : 40,
           decoration: BoxDecoration(
-            color: widget.classColor.withOpacity(0.1),
+            color: widget.classColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(

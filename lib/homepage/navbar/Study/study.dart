@@ -463,7 +463,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                               vertical: isTablet ? 8.0 : 6.0,
                             ),
                             decoration: BoxDecoration(
-                              color: context.scheme.primary.withOpacity(0.1),
+                              color: context.scheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -768,8 +768,8 @@ class _ModernClassCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      cardColor.withOpacity(0.1),
-                      cardColor.withOpacity(0.05),
+                      cardColor.withValues(alpha: 0.1),
+                      cardColor.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -789,7 +789,7 @@ class _ModernClassCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: cardColor.withOpacity(0.3),
+                            color: cardColor.withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -929,9 +929,9 @@ class _StatItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isTablet ? 20 : 16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -1087,7 +1087,7 @@ class _ResponsiveFeatureCardState extends State<_ResponsiveFeatureCard>
             borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
             boxShadow: [
               BoxShadow(
-                color: widget.gradient.colors.first.withOpacity(0.3),
+                color: widget.gradient.colors.first.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -1103,7 +1103,7 @@ class _ResponsiveFeatureCardState extends State<_ResponsiveFeatureCard>
                   width: isLargeScreen ? 90 : isTablet ? 80 : 70,
                   height: isLargeScreen ? 90 : isTablet ? 80 : 70,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -1115,7 +1115,7 @@ class _ResponsiveFeatureCardState extends State<_ResponsiveFeatureCard>
                   width: isLargeScreen ? 50 : isTablet ? 45 : 40,
                   height: isLargeScreen ? 50 : isTablet ? 45 : 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
+                    color: Colors.white.withValues(alpha: 0.08),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -1131,7 +1131,7 @@ class _ResponsiveFeatureCardState extends State<_ResponsiveFeatureCard>
                       width: iconContainerSize,
                       height: iconContainerSize,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
@@ -1164,7 +1164,7 @@ class _ResponsiveFeatureCardState extends State<_ResponsiveFeatureCard>
                             style: GoogleFonts.inter(
                               fontSize: subtitleFontSize,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                               height: 1.2,
                             ),
                             maxLines: 1,
@@ -1245,9 +1245,9 @@ class _ResponsiveEmptyState extends StatelessWidget {
                   vertical: isTablet ? 16 : 12,
                 ),
                 decoration: BoxDecoration(
-                  color: context.scheme.primary.withOpacity(0.08),
+                  color: context.scheme.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: context.scheme.primary.withOpacity(0.25)),
+                  border: Border.all(color: context.scheme.primary.withValues(alpha: 0.25)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

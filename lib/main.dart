@@ -10,7 +10,6 @@ import 'firebase_options.dart';
 import 'providers/profile_picture_provider.dart';
 import 'providers/theme_provider.dart';
 import 'theme/app_theme.dart';
-import 'package:flutter/rendering.dart';
 import 'package:app/services/notification_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

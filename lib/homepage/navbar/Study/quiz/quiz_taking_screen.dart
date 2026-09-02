@@ -42,8 +42,8 @@ class _QuizTakingScreenState extends State<QuizTakingScreen>
 
   // Get subject color
   Color get subjectColor => Color(widget.subject['color']);
-  Color get subjectColorLight => subjectColor.withOpacity(0.1);
-  Color get subjectColorMedium => subjectColor.withOpacity(0.3);
+  Color get subjectColorLight => subjectColor.withValues(alpha: 0.1);
+  Color get subjectColorMedium => subjectColor.withValues(alpha: 0.3);
 
   // ✅ Quiz session tracking
   String? _quizSessionId;
@@ -522,7 +522,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: subjectColor.withOpacity(0.3),
+                              color: subjectColor.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -616,10 +616,10 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                 Container(
                   padding: EdgeInsets.all(isTablet ? 20 : 16),
                   decoration: BoxDecoration(
-                    color: subjectColor.withOpacity(0.08),
+                    color: subjectColor.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: subjectColor.withOpacity(0.2),
+                      color: subjectColor.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -685,7 +685,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: subjectColor.withOpacity(0.15),
+                          backgroundColor: subjectColor.withValues(alpha: 0.15),
                           foregroundColor: subjectColor,
                           padding: EdgeInsets.symmetric(vertical: isTablet ? 16 : 14),
                           shape: RoundedRectangleBorder(
@@ -889,7 +889,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: active ? subjectColor.withOpacity(0.2) : Colors.grey[200],
+            color: active ? subjectColor.withValues(alpha: 0.2) : Colors.grey[200],
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -934,7 +934,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [subjectColor, subjectColor.withOpacity(0.8)],
+              colors: [subjectColor, subjectColor.withValues(alpha: 0.8)],
             ),
           ),
           child: SafeArea(
@@ -978,7 +978,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                           borderRadius: BorderRadius.circular(isTablet ? 32 : 24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 30,
                               offset: const Offset(0, 15),
                             ),
@@ -993,7 +993,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                 padding: EdgeInsets.all(isTablet ? 24 : 20),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [subjectColor, subjectColor.withOpacity(0.7)],
+                                    colors: [subjectColor, subjectColor.withValues(alpha: 0.7)],
                                   ),
                                   shape: BoxShape.circle,
                                 ),
@@ -1006,7 +1006,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                               SizedBox(height: isTablet ? 32 : 24),
                               ShaderMask(
                                 shaderCallback: (bounds) => LinearGradient(
-                                  colors: [subjectColor, subjectColor.withOpacity(0.7)],
+                                  colors: [subjectColor, subjectColor.withValues(alpha: 0.7)],
                                 ).createShader(bounds),
                                 child: Text(
                                   'Analyzing Your Materials', // ✅ Updated text
@@ -1132,7 +1132,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [subjectColor, subjectColor.withOpacity(0.8)],
+            colors: [subjectColor, subjectColor.withValues(alpha: 0.8)],
           ),
         ),
         child: SafeArea(
@@ -1170,7 +1170,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                     vertical: isTablet ? 4 : 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -1203,7 +1203,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                             vertical: isTablet ? 8 : 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -1224,7 +1224,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                         return Container(
                           height: isTablet ? 8 : 6,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: FractionallySizedBox(
@@ -1236,7 +1236,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                 borderRadius: BorderRadius.circular(4),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.white.withOpacity(0.5),
+                                    color: Colors.white.withValues(alpha: 0.5),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -1269,10 +1269,10 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                 vertical: isTablet ? 10 : 8,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(25),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
+                                  color: Colors.white.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Text(
@@ -1295,7 +1295,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                   borderRadius: BorderRadius.circular(isTablet ? 32 : 24),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withValues(alpha: 0.15),
                                       blurRadius: 30,
                                       offset: const Offset(0, 15),
                                     ),
@@ -1377,13 +1377,13 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                                   ),
                                                   boxShadow: isSelected || (_answered && isCorrect) ? [
                                                     BoxShadow(
-                                                      color: borderColor.withOpacity(0.3),
+                                                      color: borderColor.withValues(alpha: 0.3),
                                                       blurRadius: 15,
                                                       offset: const Offset(0, 8),
                                                     ),
                                                   ] : [
                                                     BoxShadow(
-                                                      color: Colors.black.withOpacity(0.05),
+                                                      color: Colors.black.withValues(alpha: 0.05),
                                                       blurRadius: 10,
                                                       offset: const Offset(0, 4),
                                                     ),
@@ -1403,7 +1403,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                                               : _answered && isSelected && !isCorrect
                                                                   ? [Colors.red, Colors.red.shade600]
                                                                   : isSelected
-                                                                      ? [subjectColor, subjectColor.withOpacity(0.7)]
+                                                                      ? [subjectColor, subjectColor.withValues(alpha: 0.7)]
                                                                       : [Colors.grey[300]!, Colors.grey[400]!],
                                                         ),
                                                         shape: BoxShape.circle,
@@ -1411,7 +1411,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                                                           BoxShadow(
                                                             color: (isCorrect ? Colors.green : 
                                                                    isSelected ? subjectColor : Colors.red)
-                                                                   .withOpacity(0.4),
+                                                                   .withValues(alpha: 0.4),
                                                             blurRadius: 8,
                                                             offset: const Offset(0, 4),
                                                           ),
@@ -1500,12 +1500,12 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                   height: isTablet ? 64 : 56,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.white, Colors.white.withOpacity(0.9)],
+                      colors: [Colors.white, Colors.white.withValues(alpha: 0.9)],
                     ),
                     borderRadius: BorderRadius.circular(isTablet ? 32 : 28),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

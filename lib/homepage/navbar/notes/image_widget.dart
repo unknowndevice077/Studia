@@ -99,7 +99,7 @@ class ImageWidget extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.9),
+                          color: Colors.red.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

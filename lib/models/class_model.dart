@@ -26,7 +26,7 @@ class ClassModel {
       'location': location,
       'teacher': teacher,
       'notes': notes,
-      'color': color.value,
+      'color': color.toARGB32(),
       'days': days,
     };
   }
@@ -38,7 +38,7 @@ class ClassModel {
       location: data['location'] ?? '',
       teacher: data['teacher'] ?? '',
       notes: data['notes'] ?? '',
-      color: Color(data['color'] ?? Colors.white.value), // ✅ Now works
+      color: Color(data['color'] ?? Colors.white.toARGB32()), // ✅ Now works
       days: data['days'] != null ? List<String>.from(data['days']) : <String>[],
     );
   }

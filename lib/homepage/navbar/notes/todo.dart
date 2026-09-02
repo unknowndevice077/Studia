@@ -229,7 +229,7 @@ class _TodoManagerState extends State<TodoManager> {
                 borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
                     blurRadius: isSmallScreen ? 15 : 20,
                     offset: const Offset(0, 6),
                   ),
@@ -289,7 +289,7 @@ class _TodoManagerState extends State<TodoManager> {
                             vertical: isVerySmallScreen ? 4 : 6,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF48BB78).withOpacity(0.1),
+                            color: const Color(0xFF48BB78).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
                           ),
                           child: Text(
@@ -328,7 +328,7 @@ class _TodoManagerState extends State<TodoManager> {
                 borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                     blurRadius: isSmallScreen ? 8 : 10,
                     offset: const Offset(0, 4),
                   ),
@@ -416,7 +416,7 @@ class _TodoManagerState extends State<TodoManager> {
             Container(
               padding: EdgeInsets.all(isVerySmallScreen ? 24 : 32),
               decoration: BoxDecoration(
-                color: const Color(0xFF667EEA).withOpacity(0.1),
+                color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -631,13 +631,13 @@ class _TodoTileState extends State<TodoTile> with SingleTickerProviderStateMixin
               borderRadius: BorderRadius.circular(widget.isSmallScreen ? 12 : 16),
               border: Border.all(
                 color: widget.task.isCompleted 
-                    ? const Color(0xFF48BB78).withOpacity(0.3)
+                    ? const Color(0xFF48BB78).withValues(alpha: 0.3)
                     : Colors.transparent,
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(widget.isDark ? 0.2 : 0.05),
+                  color: Colors.black.withValues(alpha: widget.isDark ? 0.2 : 0.05),
                   blurRadius: widget.isSmallScreen ? 8 : 10,
                   offset: const Offset(0, 4),
                 ),
@@ -740,7 +740,7 @@ class _TodoTileState extends State<TodoTile> with SingleTickerProviderStateMixin
                         onPressed: widget.onDelete,
                         icon: Icon(
                           Icons.delete_outline,
-                          color: const Color(0xFFE53E3E).withOpacity(0.7),
+                          color: const Color(0xFFE53E3E).withValues(alpha: 0.7),
                           size: widget.isVerySmallScreen ? 18 : 20,
                         ),
                         padding: EdgeInsets.all(widget.isVerySmallScreen ? 4 : 8),

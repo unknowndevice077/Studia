@@ -198,7 +198,7 @@ class NoteUIComponents {
             border: Border.all(color: classColor, width: 2.5),
             boxShadow: [
               BoxShadow(
-                color: classColor.withOpacity(0.15),
+                color: classColor.withValues(alpha: 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 3),
               ),
@@ -262,9 +262,9 @@ class NoteUIComponents {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: classColor.withOpacity(0.1),
+                          color: classColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: classColor.withOpacity(0.3), width: 1),
+                          border: Border.all(color: classColor.withValues(alpha: 0.3), width: 1),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -387,7 +387,7 @@ class NoteUIComponents {
                   margin: const EdgeInsets.only(left: 4, right: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _subjectManager.getSubjectColor(selectedSubject).withOpacity(0.15),
+                    color: _subjectManager.getSubjectColor(selectedSubject).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: _subjectManager.getSubjectColor(selectedSubject),
@@ -544,7 +544,7 @@ class NoteUIComponents {
       margin: const EdgeInsets.only(top: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
+        color: primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: primaryColor, width: 1.5),
       ),
@@ -628,7 +628,7 @@ class NoteUIComponents {
       margin: const EdgeInsets.only(top: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
+        color: primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: primaryColor, width: 1.5),
       ),
@@ -681,7 +681,7 @@ class NoteUIComponents {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.15),
+            color: primaryColor.withValues(alpha: 0.15),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -692,7 +692,7 @@ class NoteUIComponents {
           ),
         ],
         border: Border.all(
-          color: primaryColor.withOpacity(0.2),
+          color: primaryColor.withValues(alpha: 0.2),
           width: 1.5,
         ),
       ),
@@ -734,10 +734,10 @@ class NoteUIComponents {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -747,14 +747,14 @@ class NoteUIComponents {
             Icon(
               icon,
               size: 20,
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
                 fontWeight: FontWeight.w600,
               ),
             ),
