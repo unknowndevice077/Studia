@@ -12,7 +12,8 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMixin {
+class _RegisterPageState extends State<RegisterPage>
+    with TickerProviderStateMixin {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -33,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
+
     _animationController.forward();
   }
 
@@ -46,7 +47,8 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     super.dispose();
   }
 
-  bool get _passwordsMatch => passwordController.text == confirmPasswordController.text;
+  bool get _passwordsMatch =>
+      passwordController.text == confirmPasswordController.text;
   bool get _isPasswordStrong => passwordController.text.length >= 6;
 
   void signUserUp() async {
@@ -56,7 +58,8 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     final hasInternet = await _checkInternetConnection();
     if (!hasInternet) {
       setState(() {
-        _errorMessage = 'No internet connection. Please check your network and try again.';
+        _errorMessage =
+            'No internet connection. Please check your network and try again.';
       });
       return;
     }
@@ -102,13 +105,13 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     try {
       print('🔄 Starting registration process...');
       print('📧 Email: ${emailController.text.trim()}');
-      
+
       // Step 1: Create Firebase Auth user
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
 
       print('✅ Firebase Auth user created successfully');
       print('👤 User ID: ${userCredential.user?.uid}');
@@ -116,12 +119,9 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
       final user = userCredential.user;
       if (user != null) {
         print('🔄 Creating Firestore user document...');
-        
+
         // Step 2: Create Firestore user document
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .set({
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'email': user.email,
           'createdAt': FieldValue.serverTimestamp(),
           'uid': user.uid,
@@ -170,34 +170,38 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
           print('🎉 Registration completed successfully!');
         }
       }
-
     } on FirebaseAuthException catch (e) {
       print('❌ FirebaseAuthException: ${e.code} - ${e.message}');
-      
+
       String errorMessage;
       switch (e.code) {
         case 'weak-password':
-          errorMessage = 'Password is too weak. Please use a stronger password.';
+          errorMessage =
+              'Password is too weak. Please use a stronger password.';
           break;
         case 'email-already-in-use':
-          errorMessage = 'This email is already registered. Try signing in instead.';
+          errorMessage =
+              'This email is already registered. Try signing in instead.';
           break;
         case 'invalid-email':
           errorMessage = 'Please enter a valid email address.';
           break;
         case 'operation-not-allowed':
-          errorMessage = 'Email registration is not enabled. Please contact support.';
+          errorMessage =
+              'Email registration is not enabled. Please contact support.';
           break;
         case 'network-request-failed':
-          errorMessage = 'Network error. Please check your internet connection.';
+          errorMessage =
+              'Network error. Please check your internet connection.';
           break;
         case 'too-many-requests':
-          errorMessage = 'Too many attempts. Please wait a moment and try again.';
+          errorMessage =
+              'Too many attempts. Please wait a moment and try again.';
           break;
         default:
           errorMessage = 'Registration failed: ${e.message ?? e.code}';
       }
-      
+
       if (mounted) {
         setState(() {
           _errorMessage = errorMessage;
@@ -205,7 +209,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
       }
     } on FirebaseException catch (e) {
       print('❌ FirebaseException: ${e.code} - ${e.message}');
-      
+
       if (mounted) {
         setState(() {
           _errorMessage = 'Database error: ${e.message ?? 'Please try again'}';
@@ -213,7 +217,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
       }
     } catch (e) {
       print('❌ Unknown error: $e');
-      
+
       if (mounted) {
         setState(() {
           _errorMessage = 'An unexpected error occurred: ${e.toString()}';
@@ -239,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.height < 700;
     final isVerySmallScreen = size.height < 600;
-    
+
     return Scaffold(
       backgroundColor: context.scheme.surface,
       body: SafeArea(
@@ -254,267 +258,298 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
             child: ResponsiveContent(
               maxWidth: 440,
               child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: size.height - MediaQuery.of(context).padding.top,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: isVerySmallScreen ? 16 : 24),
-                    
-                    // ✅ Responsive Header
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Container(
-                              width: isVerySmallScreen ? 50 : 60,
-                              height: isVerySmallScreen ? 50 : 60,
-                              decoration: BoxDecoration(
-                                color: context.scheme.primary,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Icon(
-                                Icons.school_outlined,
-                                color: Colors.white,
-                                size: isVerySmallScreen ? 24 : 28,
-                              ),
-                            ),
-                            SizedBox(height: isVerySmallScreen ? 20 : 32),
-                            Text(
-                              'Create account',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: isVerySmallScreen ? 28 : 32,
-                                fontWeight: FontWeight.w300,
-                                color: context.scheme.onSurface,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            SizedBox(height: isVerySmallScreen ? 4 : 8),
-                            Text(
-                              'Join us today',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: isVerySmallScreen ? 14 : 16,
-                                color: context.scheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    SizedBox(height: isVerySmallScreen ? 24 : 32),
-                    
-                    // ✅ Responsive Form
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Error Message
-                          if (_errorMessage != null)
-                            Container(
-                              padding: EdgeInsets.all(isVerySmallScreen ? 12 : 16),
-                              margin: EdgeInsets.only(
-                                bottom: isVerySmallScreen ? 16 : 24,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.colors.danger.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: context.colors.danger.withOpacity(0.3)),
-                              ),
-                              child: Text(
-                                _errorMessage!,
-                                style: TextStyle(
-                                  color: context.colors.danger,
-                                  fontSize: isVerySmallScreen ? 13 : 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          
-                          // Email Field
-                          _MinimalTextField(
-                            controller: emailController,
-                            label: 'Email',
-                            keyboardType: TextInputType.emailAddress,
-                            isCompact: isVerySmallScreen,
-                          ),
-                          
-                          SizedBox(height: isVerySmallScreen ? 16 : 20),
-                          
-                          // Password Field
-                          _MinimalTextField(
-                            controller: passwordController,
-                            label: 'Password (min 6 characters)',
-                            obscureText: _obscurePassword,
-                            isCompact: isVerySmallScreen,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                color: context.scheme.onSurfaceVariant,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                          ),
-                          
-                          // Password Strength Indicator
-                          if (passwordController.text.isNotEmpty)
-                            Padding(
-                              padding: EdgeInsets.only(top: isVerySmallScreen ? 6 : 8),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: _isPasswordStrong ? context.colors.success : context.colors.danger,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      _isPasswordStrong ? 'Strong password' : 'Weak password',
-                                      style: TextStyle(
-                                        fontSize: isVerySmallScreen ? 11 : 12,
-                                        color: _isPasswordStrong ? context.colors.success : context.colors.danger,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          
-                          SizedBox(height: isVerySmallScreen ? 16 : 20),
-                          
-                          // Confirm Password Field
-                          _MinimalTextField(
-                            controller: confirmPasswordController,
-                            label: 'Confirm password',
-                            obscureText: _obscureConfirmPassword,
-                            isCompact: isVerySmallScreen,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                color: context.scheme.onSurfaceVariant,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword = !_obscureConfirmPassword;
-                                });
-                              },
-                            ),
-                          ),
-                          
-                          // Password Match Indicator
-                          if (confirmPasswordController.text.isNotEmpty)
-                            Padding(
-                              padding: EdgeInsets.only(top: isVerySmallScreen ? 6 : 8),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: _passwordsMatch ? context.colors.success : context.colors.danger,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      _passwordsMatch ? 'Passwords match' : 'Passwords do not match',
-                                      style: TextStyle(
-                                        fontSize: isVerySmallScreen ? 11 : 12,
-                                        color: _passwordsMatch ? context.colors.success : context.colors.danger,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          
-                          SizedBox(height: isVerySmallScreen ? 24 : 32),
-                          
-                          // Create Account Button
-                          _MinimalButton(
-                            onPressed: _isLoading ? null : signUserUp,
-                            isLoading: _isLoading,
-                            text: 'Create Account',
-                            isCompact: isVerySmallScreen,
-                          ),
-                          
-                          SizedBox(height: isVerySmallScreen ? 16 : 24),
-                          
-                          // Terms Text
-                          Text(
-                            'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: isVerySmallScreen ? 11 : 12,
-                              color: context.scheme.onSurfaceVariant,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    const Spacer(),
-                    
-                    // ✅ Login Link
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            bottom: isVerySmallScreen ? 16 : 32,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                constraints: BoxConstraints(
+                  minHeight: size.height - MediaQuery.of(context).padding.top,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: isVerySmallScreen ? 16 : 24),
+
+                      // ✅ Responsive Header
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Center(
+                          child: Column(
                             children: [
-                              Text(
-                                'Already have an account? ',
-                                style: TextStyle(
-                                  color: context.scheme.onSurfaceVariant,
-                                  fontSize: isVerySmallScreen ? 13 : 14,
+                              Container(
+                                width: isVerySmallScreen ? 50 : 60,
+                                height: isVerySmallScreen ? 50 : 60,
+                                decoration: BoxDecoration(
+                                  color: context.scheme.primary,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Icon(
+                                  Icons.school_outlined,
+                                  color: Colors.white,
+                                  size: isVerySmallScreen ? 24 : 28,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: widget.onTap,
-                                child: Text(
-                                  'Sign in',
-                                  style: TextStyle(
-                                    color: context.scheme.primary,
-                                    fontSize: isVerySmallScreen ? 13 : 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              SizedBox(height: isVerySmallScreen ? 20 : 32),
+                              Text(
+                                'Create account',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: isVerySmallScreen ? 28 : 32,
+                                  fontWeight: FontWeight.w300,
+                                  color: context.scheme.onSurface,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              SizedBox(height: isVerySmallScreen ? 4 : 8),
+                              Text(
+                                'Join us today',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: isVerySmallScreen ? 14 : 16,
+                                  color: context.scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+
+                      SizedBox(height: isVerySmallScreen ? 24 : 32),
+
+                      // ✅ Responsive Form
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Error Message
+                            if (_errorMessage != null)
+                              Container(
+                                padding: EdgeInsets.all(
+                                  isVerySmallScreen ? 12 : 16,
+                                ),
+                                margin: EdgeInsets.only(
+                                  bottom: isVerySmallScreen ? 16 : 24,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: context.colors.danger.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: context.colors.danger.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  _errorMessage!,
+                                  style: TextStyle(
+                                    color: context.colors.danger,
+                                    fontSize: isVerySmallScreen ? 13 : 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+
+                            // Email Field
+                            _MinimalTextField(
+                              controller: emailController,
+                              label: 'Email',
+                              keyboardType: TextInputType.emailAddress,
+                              isCompact: isVerySmallScreen,
+                            ),
+
+                            SizedBox(height: isVerySmallScreen ? 16 : 20),
+
+                            // Password Field
+                            _MinimalTextField(
+                              controller: passwordController,
+                              label: 'Password (min 6 characters)',
+                              obscureText: _obscurePassword,
+                              isCompact: isVerySmallScreen,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: context.scheme.onSurfaceVariant,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            // Password Strength Indicator
+                            if (passwordController.text.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: isVerySmallScreen ? 6 : 8,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            _isPasswordStrong
+                                                ? context.colors.success
+                                                : context.colors.danger,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        _isPasswordStrong
+                                            ? 'Strong password'
+                                            : 'Weak password',
+                                        style: TextStyle(
+                                          fontSize: isVerySmallScreen ? 11 : 12,
+                                          color:
+                                              _isPasswordStrong
+                                                  ? context.colors.success
+                                                  : context.colors.danger,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            SizedBox(height: isVerySmallScreen ? 16 : 20),
+
+                            // Confirm Password Field
+                            _MinimalTextField(
+                              controller: confirmPasswordController,
+                              label: 'Confirm password',
+                              obscureText: _obscureConfirmPassword,
+                              isCompact: isVerySmallScreen,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: context.scheme.onSurfaceVariant,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            // Password Match Indicator
+                            if (confirmPasswordController.text.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: isVerySmallScreen ? 6 : 8,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            _passwordsMatch
+                                                ? context.colors.success
+                                                : context.colors.danger,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        _passwordsMatch
+                                            ? 'Passwords match'
+                                            : 'Passwords do not match',
+                                        style: TextStyle(
+                                          fontSize: isVerySmallScreen ? 11 : 12,
+                                          color:
+                                              _passwordsMatch
+                                                  ? context.colors.success
+                                                  : context.colors.danger,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            SizedBox(height: isVerySmallScreen ? 24 : 32),
+
+                            // Create Account Button
+                            _MinimalButton(
+                              onPressed: _isLoading ? null : signUserUp,
+                              isLoading: _isLoading,
+                              text: 'Create Account',
+                              isCompact: isVerySmallScreen,
+                            ),
+
+                            SizedBox(height: isVerySmallScreen ? 16 : 24),
+
+                            // Terms Text
+                            Text(
+                              'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: isVerySmallScreen ? 11 : 12,
+                                color: context.scheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      // ✅ Login Link
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: isVerySmallScreen ? 16 : 32,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Already have an account? ',
+                                  style: TextStyle(
+                                    color: context.scheme.onSurfaceVariant,
+                                    fontSize: isVerySmallScreen ? 13 : 14,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: widget.onTap,
+                                  child: Text(
+                                    'Sign in',
+                                    style: TextStyle(
+                                      color: context.scheme.primary,
+                                      fontSize: isVerySmallScreen ? 13 : 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               ),
             ),
           ),
@@ -566,10 +601,7 @@ class _MinimalTextField extends StatelessWidget {
             controller: controller,
             obscureText: obscureText,
             keyboardType: keyboardType,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.all(isCompact ? 12 : 16),
@@ -601,33 +633,35 @@ class _MinimalButton extends StatelessWidget {
     return Container(
       height: isCompact ? 48 : 56,
       decoration: BoxDecoration(
-        color: onPressed != null ? context.scheme.primary : context.scheme.surfaceContainerHighest,
+        color:
+            onPressed != null
+                ? context.scheme.primary
+                : context.scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        child:
+            isLoading
+                ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+                : Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              )
-            : Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
       ),
     );
   }

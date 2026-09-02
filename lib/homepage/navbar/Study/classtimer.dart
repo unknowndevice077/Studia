@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:app/theme/responsive.dart';
 
 // Class Timer Page with circular ball animation - separate from general timer
@@ -44,10 +43,6 @@ class _ClassTimerState extends State<ClassTimer>
   late Animation<double> _pulseAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _ballAnimation; // Animation for the ball
-
-  // Plays an actual alarm sound (looped, like a real alarm clock) when the
-  // focus session ends, until the user dismisses the completion dialog.
-  final AudioPlayer _alarmPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -152,7 +147,6 @@ class _ClassTimerState extends State<ClassTimer>
           _pulseController.stop();
           _ballController.stop(); // Stop ball animation
           _saveStudySession(); // Save when timer completes naturally
-          _playAlarm();
           _showCompletionDialog();
         } else if (_seconds == 0) {
           _minutes--;
@@ -197,23 +191,6 @@ class _ClassTimerState extends State<ClassTimer>
     _saveStudySession();
   }
 
-  Future<void> _playAlarm() async {
-    try {
-      await _alarmPlayer.setReleaseMode(ReleaseMode.loop);
-      await _alarmPlayer.play(AssetSource('alarms/alarm.mp3'));
-    } catch (e) {
-      print('Error playing alarm sound: $e');
-    }
-  }
-
-  Future<void> _stopAlarm() async {
-    try {
-      await _alarmPlayer.stop();
-    } catch (e) {
-      print('Error stopping alarm sound: $e');
-    }
-  }
-
   void _showCompletionDialog() {
     showDialog(
       context: context,
@@ -251,7 +228,7 @@ class _ClassTimerState extends State<ClassTimer>
                     'You completed your study session!',
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -269,7 +246,6 @@ class _ClassTimerState extends State<ClassTimer>
                       ),
                     ),
                     onPressed: () {
-                      _stopAlarm();
                       Navigator.pop(context);
                       _resetTimer();
                     },
@@ -526,7 +502,7 @@ class _ClassTimerState extends State<ClassTimer>
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: classColor.withOpacity(0.4),
+                                      color: classColor.withValues(alpha: 0.4),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -562,13 +538,13 @@ class _ClassTimerState extends State<ClassTimer>
                                         size: 20,
                                       ),
                               selected: isSelected,
-                              selectedTileColor: classColor.withOpacity(0.1),
+                              selectedTileColor: classColor.withValues(alpha: 0.1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 side:
                                     isSelected
                                         ? BorderSide(
-                                          color: classColor.withOpacity(0.3),
+                                          color: classColor.withValues(alpha: 0.3),
                                         )
                                         : BorderSide.none,
                               ),
@@ -802,7 +778,6 @@ class _ClassTimerState extends State<ClassTimer>
     _pulseController.dispose();
     _scaleController.dispose();
     _ballController.dispose();
-    _alarmPlayer.dispose();
     super.dispose();
   }
 
@@ -874,8 +849,8 @@ class _ClassTimerState extends State<ClassTimer>
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: selectedClass != null 
-                                  ? Color(selectedClass['color']).withOpacity(0.2)
-                                  : Colors.white.withOpacity(0.1),
+                                  ? Color(selectedClass['color']).withValues(alpha: 0.2)
+                                  : Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: selectedClass != null 
@@ -912,10 +887,10 @@ class _ClassTimerState extends State<ClassTimer>
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(selectedClass['color']).withOpacity(0.15),
+                    color: Color(selectedClass['color']).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: Color(selectedClass['color']).withOpacity(0.3),
+                      color: Color(selectedClass['color']).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -956,15 +931,15 @@ class _ClassTimerState extends State<ClassTimer>
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: selectedClass != null
-                                ? Color(selectedClass['color']).withOpacity(0.3)
-                                : Colors.white.withOpacity(0.2),
+                                ? Color(selectedClass['color']).withValues(alpha: 0.3)
+                                : Colors.white.withValues(alpha: 0.2),
                             width: 2,
                           ),
                           gradient: selectedClass != null
                               ? LinearGradient(
                                   colors: [
-                                    Color(selectedClass['color']).withOpacity(0.1),
-                                    Color(selectedClass['color']).withOpacity(0.3),
+                                    Color(selectedClass['color']).withValues(alpha: 0.1),
+                                    Color(selectedClass['color']).withValues(alpha: 0.3),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -1021,7 +996,7 @@ class _ClassTimerState extends State<ClassTimer>
                                     BoxShadow(
                                       color: (selectedClass != null 
                                           ? Color(selectedClass['color'])
-                                          : Colors.blue).withOpacity(0.5),
+                                          : Colors.blue).withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     ),
@@ -1055,10 +1030,10 @@ class _ClassTimerState extends State<ClassTimer>
                               width: isTablet ? 80 : 70,
                               height: isTablet ? 80 : 70,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
+                                  color: Colors.white.withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
@@ -1100,7 +1075,7 @@ class _ClassTimerState extends State<ClassTimer>
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: (_isRunning ? Colors.orange : Colors.green).withOpacity(0.3),
+                                    color: (_isRunning ? Colors.orange : Colors.green).withValues(alpha: 0.3),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
@@ -1140,10 +1115,10 @@ class _ClassTimerState extends State<ClassTimer>
                               width: isTablet ? 80 : 70,
                               height: isTablet ? 80 : 70,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
+                                  color: Colors.white.withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
