@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/services/gemini_service.dart';
+import 'package:app/theme/responsive.dart';
 
 class AskAiScreen extends StatefulWidget {
   const AskAiScreen({super.key});
@@ -113,80 +114,88 @@ class _AskAiScreenState extends State<AskAiScreen> {
                       style: GoogleFonts.inter(color: Colors.white70, fontSize: 18),
                     ),
                   )
-                : AnimatedList(
-                    key: _listKey,
-                    initialItemCount: _messages.length,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                    itemBuilder: (context, idx, animation) {
-                      final msg = _messages[idx];
-                      return SizeTransition(
-                        sizeFactor: animation,
-                        axisAlignment: 0.0,
-                        child: Align(
-                          alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 350),
-                            curve: Curves.easeOut,
-                            margin: const EdgeInsets.symmetric(vertical: 4),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: msg.isUser ? Colors.blue[700] : Colors.grey[900],
-                              borderRadius: BorderRadius.circular(16),
+                // Cap the message list width on desktop/web and center it, like
+                // most chat apps do, instead of letting bubbles stretch edge to edge.
+                : ResponsiveContent(
+                    maxWidth: 900,
+                    child: AnimatedList(
+                      key: _listKey,
+                      initialItemCount: _messages.length,
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      itemBuilder: (context, idx, animation) {
+                        final msg = _messages[idx];
+                        return SizeTransition(
+                          sizeFactor: animation,
+                          axisAlignment: 0.0,
+                          child: Align(
+                            alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeOut,
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: msg.isUser ? Colors.blue[700] : Colors.grey[900],
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: SelectableText(
+                                msg.text,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
+                                cursorColor: Colors.white,
+                              ),
                             ),
-                            child: SelectableText(
-                              msg.text,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+          ),
+          if (_isTyping)
+            ResponsiveContent(
+              maxWidth: 900,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _skipTyping = true;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[900],
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              _typingText,
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 15,
                               ),
-                              cursorColor: Colors.white,
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          if (_isTyping)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _skipTyping = true;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            _typingText,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                            margin: const EdgeInsets.only(left: 2),
+                            width: 10,
+                            height: 18,
+                            child: _isTyping
+                                ? const BlinkingCursor()
+                                : null,
                           ),
-                        ),
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
-                          margin: const EdgeInsets.only(left: 2),
-                          width: 10,
-                          height: 18,
-                          child: _isTyping
-                              ? const BlinkingCursor()
-                              : null,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -195,38 +204,41 @@ class _AskAiScreenState extends State<AskAiScreen> {
           Container(
             color: Colors.black,
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: "Type your question...",
-                      hintStyle: TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey[900],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
+            child: ResponsiveContent(
+              maxWidth: 900,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: "Type your question...",
+                        hintStyle: TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.grey[900],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                      onSubmitted: (_) => _sendMessage(),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
                   ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: _isSending
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Icon(Icons.send, color: Colors.white),
-                  onPressed: _isSending ? null : _sendMessage,
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: _isSending
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : const Icon(Icons.send, color: Colors.white),
+                    onPressed: _isSending ? null : _sendMessage,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

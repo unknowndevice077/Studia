@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:app/homepage/navbar/Study/classtimer.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class TopicScreen extends StatefulWidget {
   final String classId;
@@ -521,7 +522,17 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
     final isTablet = screenSize.width > 600;
+
+    // On wide/desktop viewports, cap the content width and center it so the
+    // page doesn't stretch full-bleed across the browser window — instead
+    // grow the side padding evenly (same pattern as study.dart).
+    const contentMaxWidth = 1100.0;
+    final extraHorizontalPadding = screenWidth > contentMaxWidth
+        ? (screenWidth - contentMaxWidth) / 2
+        : 0.0;
+    final topicColumns = context.isDesktop ? 3 : context.isTablet ? 2 : 1;
 
     return Scaffold(
       backgroundColor: context.scheme.surface,
@@ -622,9 +633,9 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
             // Action buttons section
             SliverPadding(
               padding: EdgeInsets.fromLTRB(
-                isTablet ? 24 : 20,
+                (isTablet ? 24 : 20) + extraHorizontalPadding,
                 isTablet ? 32 : 24,
-                isTablet ? 24 : 20,
+                (isTablet ? 24 : 20) + extraHorizontalPadding,
                 0,
               ),
               sliver: SliverList(
@@ -814,27 +825,62 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                   );
                 }
 
+                final docs = snapshot.data!.docs;
+
+                Widget buildTopicCard(int index) {
+                  final doc = docs[index];
+                  final topicData = doc.data() as Map<String, dynamic>;
+
+                  return _MinimalTopicCard(
+                    topicId: doc.id,
+                    topicData: topicData,
+                    classId: widget.classId,
+                    classColor: widget.classColor,
+                    classTitle: widget.classTitle,
+                    isTablet: isTablet,
+                    index: index,
+                    isEditMode: _isEditMode, // Pass edit mode
+                    onDelete: () => _deleteTopic(doc.id, topicData['title'] ?? 'Untitled'), // Pass delete function
+                  );
+                }
+
+                final rowCount = (docs.length / topicColumns).ceil();
+
                 return SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: isTablet ? 24 : 20),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (isTablet ? 24 : 20) + extraHorizontalPadding,
+                  ),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final doc = snapshot.data!.docs[index];
-                        final topicData = doc.data() as Map<String, dynamic>;
-                        
-                        return _MinimalTopicCard(
-                          topicId: doc.id,
-                          topicData: topicData,
-                          classId: widget.classId,
-                          classColor: widget.classColor,
-                          classTitle: widget.classTitle,
-                          isTablet: isTablet,
-                          index: index,
-                          isEditMode: _isEditMode, // Pass edit mode
-                          onDelete: () => _deleteTopic(doc.id, topicData['title'] ?? 'Untitled'), // Pass delete function
+                      (context, rowIndex) {
+                        // Single column (mobile): one card per row, same as before.
+                        if (topicColumns == 1) {
+                          return buildTopicCard(rowIndex);
+                        }
+
+                        // Tablet/desktop: lay cards out in a grid of equal-height
+                        // rows instead of a single column stretched full-width.
+                        final start = rowIndex * topicColumns;
+                        final end = (start + topicColumns).clamp(0, docs.length);
+                        return IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              for (var i = start; i < end; i++) ...[
+                                Expanded(child: buildTopicCard(i)),
+                                if (i != end - 1) SizedBox(width: isTablet ? 16.0 : 12.0),
+                              ],
+                              // Pad out an incomplete last row so cards keep a
+                              // consistent width instead of stretching.
+                              for (var i = end; i < start + topicColumns; i++) ...[
+                                const SizedBox(width: 16),
+                                const Expanded(child: SizedBox.shrink()),
+                              ],
+                            ],
+                          ),
                         );
                       },
-                      childCount: snapshot.data!.docs.length,
+                      childCount: rowCount,
                     ),
                   ),
                 );
@@ -1732,64 +1778,97 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
             );
           }
 
+          final docs = snapshot.data!.docs;
+
+          // On tablet/desktop, lay files out in a grid instead of a single
+          // column stretched full-width; mobile keeps the plain list.
+          if (context.isWide) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(isTablet ? 24 : 20),
+              child: ResponsiveContent(
+                maxWidth: 1100,
+                child: ResponsiveGrid(
+                  minTileWidth: 320,
+                  children: [
+                    for (final doc in docs)
+                      _buildFileTile(
+                        context,
+                        doc.id,
+                        doc.data() as Map<String, dynamic>,
+                        isTablet,
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }
+
           return ListView.builder(
             padding: EdgeInsets.all(isTablet ? 24 : 20),
-            itemCount: snapshot.data!.docs.length,
+            itemCount: docs.length,
             itemBuilder: (context, index) {
-              final doc = snapshot.data!.docs[index];
+              final doc = docs[index];
               final fileData = doc.data() as Map<String, dynamic>;
-
-              return Container(
-                margin: EdgeInsets.only(bottom: isTablet ? 12 : 8),
-                child: ListTile(
-                  leading: Container(
-                    width: isTablet ? 48 : 40,
-                    height: isTablet ? 48 : 40,
-                    decoration: BoxDecoration(
-                      color: widget.classColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      _getFileIcon(fileData['name'] ?? ''),
-                      color: widget.classColor,
-                      size: isTablet ? 24 : 20,
-                    ),
-                  ),
-                  title: Text(
-                    fileData['name'] ?? 'Unnamed File',
-                    style: GoogleFonts.inter(
-                      fontSize: isTablet ? 16 : 14,
-                      fontWeight: FontWeight.w600,
-                      color: context.scheme.onSurface,
-                    ),
-                  ),
-                  subtitle: Text(
-                    _formatFileSize(fileData['size'] ?? 0),
-                    style: GoogleFonts.inter(
-                      fontSize: isTablet ? 14 : 12,
-                      color: context.scheme.onSurfaceVariant,
-                    ),
-                  ),
-                  trailing: _isEditMode 
-                      ? IconButton(
-                          onPressed: () => _deleteFile(doc.id, fileData['name']),
-                          icon: Icon(Icons.delete, color: context.colors.danger),
-                        )
-                      : Icon(Icons.chevron_right, color: context.scheme.onSurfaceVariant),
-                  onTap: _isEditMode ? null : () => _openFile(fileData['path']),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  tileColor: context.scheme.surfaceContainer,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? 20 : 16,
-                    vertical: isTablet ? 8 : 4,
-                  ),
-                ),
-              );
+              return _buildFileTile(context, doc.id, fileData, isTablet);
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildFileTile(
+    BuildContext context,
+    String fileId,
+    Map<String, dynamic> fileData,
+    bool isTablet,
+  ) {
+    return Container(
+      margin: EdgeInsets.only(bottom: isTablet ? 12 : 8),
+      child: ListTile(
+        leading: Container(
+          width: isTablet ? 48 : 40,
+          height: isTablet ? 48 : 40,
+          decoration: BoxDecoration(
+            color: widget.classColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            _getFileIcon(fileData['name'] ?? ''),
+            color: widget.classColor,
+            size: isTablet ? 24 : 20,
+          ),
+        ),
+        title: Text(
+          fileData['name'] ?? 'Unnamed File',
+          style: GoogleFonts.inter(
+            fontSize: isTablet ? 16 : 14,
+            fontWeight: FontWeight.w600,
+            color: context.scheme.onSurface,
+          ),
+        ),
+        subtitle: Text(
+          _formatFileSize(fileData['size'] ?? 0),
+          style: GoogleFonts.inter(
+            fontSize: isTablet ? 14 : 12,
+            color: context.scheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: _isEditMode
+            ? IconButton(
+                onPressed: () => _deleteFile(fileId, fileData['name']),
+                icon: Icon(Icons.delete, color: context.colors.danger),
+              )
+            : Icon(Icons.chevron_right, color: context.scheme.onSurfaceVariant),
+        onTap: _isEditMode ? null : () => _openFile(fileData['path']),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        tileColor: context.scheme.surfaceContainer,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 20 : 16,
+          vertical: isTablet ? 8 : 4,
+        ),
       ),
     );
   }

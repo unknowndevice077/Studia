@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/services/gemini_service.dart';
+import 'package:app/theme/responsive.dart';
 
 class QuizOverviewScreen extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -498,7 +499,9 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
           child: SingleChildScrollView(
             controller: _scrollController,
             padding: EdgeInsets.zero,
-            child: Column(
+            child: ResponsiveContent(
+              maxWidth: 1000,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Modern AppBar
@@ -643,6 +646,7 @@ Try reviewing your study materials for this topic: ${widget.quizResponses[questi
                 ),
                 SizedBox(height: 32),
               ],
+              ),
             ),
           ),
         ),

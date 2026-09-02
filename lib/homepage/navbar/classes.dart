@@ -11,6 +11,7 @@ import 'package:flutter/services.dart'; // ✅ ADD: For Clipboard functionality
 // import 'package:app/debug/notification_service_debug_page.dart'; // ✅ ADD: If using debug page option
 import 'package:app/services/notification_test_page.dart'; // ✅ ADD: Import the test page
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class DayHelper {
   static const List<String> weekdayOrder = [
@@ -584,53 +585,104 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.school_outlined,
-                    size: 80,
-                    color: context.scheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No classes yet. Add some!',
-                    style: GoogleFonts.dmSerifText(
-                      fontSize: 20,
+              child: ResponsiveContent(
+                maxWidth: 480,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.school_outlined,
+                      size: 80,
                       color: context.scheme.onSurfaceVariant,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Text(
+                      'No classes yet. Add some!',
+                      style: GoogleFonts.dmSerifText(
+                        fontSize: 20,
+                        color: context.scheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
           }
 
           final docs = snapshot.data!.docs;
 
+          // Number of cards per row: single column on mobile, more columns
+          // as the viewport widens so the list doesn't stretch full-bleed.
+          final classColumns = context.isDesktop ? 3 : (context.isTablet ? 2 : 1);
+          final rowCount = (docs.length / classColumns).ceil();
+
+          // Cap and center the content on very wide/desktop viewports by
+          // growing the side padding instead of stretching full-bleed.
+          final screenWidth = context.screenWidth;
+          const contentMaxWidth = 1200.0;
+          final extraHorizontalPadding = screenWidth > contentMaxWidth
+              ? (screenWidth - contentMaxWidth) / 2
+              : 0.0;
+          final horizontalPadding = (context.isWide ? 16.0 : 0.0) + extraHorizontalPadding;
+
+          ClassModel classModelFor(QueryDocumentSnapshot doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return ClassModel(
+              title: data['title'] ?? '',
+              time: data['time'] ?? '',
+              location: data['location'] ?? '',
+              teacher: data['teacher'] ?? '',
+              notes: data['notes'] ?? '',
+              color: Color(data['color'] ?? Colors.white.value),
+              days: List<String>.from(data['days'] ?? []),
+              notify: data['notify'] ?? true,
+            );
+          }
+
+          Widget buildCard(int index) {
+            final doc = docs[index];
+            final classModel = classModelFor(doc);
+            return ExpandableClassCard(
+              key: ValueKey(doc.id),
+              classModel: classModel,
+              onEdit: () => _addOrEditClass(
+                existing: classModel,
+                docId: doc.id,
+              ),
+              onDelete: () => _deleteClass(doc.id),
+              onToggleNotify: (notify) => _handleNotificationToggle(doc.id, notify),
+            );
+          }
+
           // ✅ UPDATE: Use the new notification toggle handler
           return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final doc = docs[index];
-              final data = doc.data() as Map<String, dynamic>;
-              final classModel = ClassModel(
-                title: data['title'] ?? '',
-                time: data['time'] ?? '',
-                location: data['location'] ?? '',
-                teacher: data['teacher'] ?? '',
-                notes: data['notes'] ?? '',
-                color: Color(data['color'] ?? Colors.white.value),
-                days: List<String>.from(data['days'] ?? []),
-                notify: data['notify'] ?? true,
-              );
-              return ExpandableClassCard(
-                classModel: classModel,
-                onEdit: () => _addOrEditClass(
-                  existing: classModel,
-                  docId: doc.id,
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: context.isWide ? 12.0 : 0.0,
+            ),
+            itemCount: rowCount,
+            itemBuilder: (context, rowIndex) {
+              // Single column (mobile): one card per row, same as before.
+              if (classColumns == 1) {
+                return buildCard(rowIndex);
+              }
+
+              // Tablet/desktop: lay cards out in a grid of equal-height rows
+              // instead of a single column stretched full-width.
+              final start = rowIndex * classColumns;
+              final end = (start + classColumns).clamp(0, docs.length);
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = start; i < end; i++) Expanded(child: buildCard(i)),
+                    // Pad out an incomplete last row so cards keep a
+                    // consistent width instead of stretching.
+                    for (var i = end; i < start + classColumns; i++)
+                      const Expanded(child: SizedBox.shrink()),
+                  ],
                 ),
-                onDelete: () => _deleteClass(doc.id),
-                onToggleNotify: (notify) => _handleNotificationToggle(doc.id, notify),
               );
             },
           );
@@ -1298,12 +1350,20 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
   // ✅ UPDATED: Build method with scroll controller and error keys
   @override
   Widget build(BuildContext context) {
+    // Cap the dialog's width on tablet/desktop so the form doesn't stretch
+    // full-bleed across the window — mobile keeps its near-full-width sheet.
+    final dialogMaxWidth = context.responsive<double>(
+      mobile: MediaQuery.of(context).size.width * 0.95,
+      tablet: 560.0,
+      desktop: 620.0,
+    );
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.95,
+          maxWidth: dialogMaxWidth,
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
         decoration: BoxDecoration(

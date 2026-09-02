@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:app/providers/profile_picture_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -227,6 +228,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  static const _navIcons = [Icons.home, Icons.note, Icons.school, Icons.event, Icons.class_];
+  static const _navLabels = ['Home', 'Notes', 'Study', 'Events', 'Classes'];
+
+  /// Desktop/wide layout: a persistent side rail instead of a bottom bar,
+  /// so the nav doesn't stretch into a handful of icons scattered across a
+  /// wide browser window.
+  Widget _buildNavigationRail() {
+    return NavigationRail(
+      backgroundColor: context.scheme.surface,
+      selectedIndex: _selectedIndex,
+      onDestinationSelected: _onItemTapped,
+      labelType: NavigationRailLabelType.all,
+      minWidth: 84,
+      leading: const SizedBox(height: 12),
+      selectedIconTheme: IconThemeData(color: context.scheme.primary),
+      selectedLabelTextStyle: TextStyle(
+        color: context.scheme.primary,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedIconTheme: IconThemeData(color: context.scheme.onSurfaceVariant),
+      unselectedLabelTextStyle: TextStyle(color: context.scheme.onSurfaceVariant),
+      destinations: [
+        for (var i = 0; i < _navIcons.length; i++)
+          NavigationRailDestination(
+            icon: Icon(_navIcons[i]),
+            selectedIcon: Icon(_navIcons[i]),
+            label: Text(_navLabels[i]),
+          ),
+      ],
+    );
+  }
+
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _selectedIndex == index;
     final primaryColor = context.scheme.primary;
@@ -395,40 +428,64 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  Widget _buildPageView() {
+    return PageView(
+      controller: _pageController,
+      onPageChanged: (index) {
+        setState(() {
+          if (_selectedIndex < _pageAnimationControllers.length) {
+            _pageAnimationControllers[_selectedIndex].reset();
+          }
+          _selectedIndex = index;
+          if (_selectedIndex < _pageAnimationControllers.length) {
+            _isEditingNote = false;
+            _pageAnimationControllers[_selectedIndex].forward();
+          }
+        });
+      },
+      children: [
+        _buildHomePage(),
+        _buildNotesPage(),
+        _buildStudyPage(),
+        _buildEventsPage(),
+        _buildClassesPage(),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Desktop/wide viewports get a persistent side rail instead of a bottom
+    // bar — a bottom bar with 5 icons spaced across a 1400px+ window looks
+    // sparse and stretched, a side rail reads as an intentional app shell.
+    if (context.isDesktop) {
+      return Scaffold(
+        backgroundColor: context.scheme.surface,
+        endDrawer: _buildDrawer(),
+        body: SafeArea(
+          child: Row(
+            children: [
+              _buildNavigationRail(),
+              VerticalDivider(width: 1, color: context.scheme.outlineVariant),
+              Expanded(child: _buildPageView()),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: context.scheme.surface,
       endDrawer: _buildDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    if (_selectedIndex < _pageAnimationControllers.length) {
-                      _pageAnimationControllers[_selectedIndex].reset();
-                    }
-                    _selectedIndex = index;
-                    if (_selectedIndex < _pageAnimationControllers.length) {
-                      _isEditingNote = false;
-                      _pageAnimationControllers[_selectedIndex].forward();
-                    }
-                  });
-                },
-                children: [
-                  _buildHomePage(),
-                  _buildNotesPage(),
-                  _buildStudyPage(),
-                  _buildEventsPage(),
-                  _buildClassesPage(),
-                ],
-              ),
-            ),
+            Expanded(child: _buildPageView()),
             if (!_isEditingNote)
-              _buildBottomNavbar(),
+              ResponsiveContent(
+                maxWidth: 640,
+                child: _buildBottomNavbar(),
+              ),
           ],
         ),
       ),

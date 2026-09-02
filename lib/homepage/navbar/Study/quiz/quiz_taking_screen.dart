@@ -5,6 +5,7 @@ import 'package:app/services/gemini_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'quiz_overview.dart';
+import 'package:app/theme/responsive.dart';
 class QuizTakingScreen extends StatefulWidget {
   final List<Map<String, dynamic>> topics;
   final int questionCount;
@@ -937,7 +938,9 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
             ),
           ),
           child: SafeArea(
-            child: Column(
+            child: ResponsiveContent(
+              maxWidth: 900,
+              child: Column(
               children: [
                 Padding(
                   padding: EdgeInsets.all(isTablet ? 24 : 16),
@@ -1068,6 +1071,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                 ),
               ],
             ),
+            ),
           ),
         ),
       );
@@ -1132,7 +1136,9 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
           ),
         ),
         child: SafeArea(
-          child: Column(
+          child: ResponsiveContent(
+            maxWidth: 900,
+            child: Column(
             children: [
               // App bar and progress
               Container(
@@ -1539,6 +1545,7 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                   ),
                 ),
             ],
+          ),
           ),
         ),
       ),

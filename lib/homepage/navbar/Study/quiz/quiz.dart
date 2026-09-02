@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app/homepage/navbar/Study/quiz/quiz_taking_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class StudyQuizScreen extends StatefulWidget {
   const StudyQuizScreen({super.key});
@@ -139,6 +140,14 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
     final isTablet = screenSize.width > 600;
     final isLargeScreen = screenSize.width > 900;
 
+    // On wide/desktop viewports, cap the content width and center it so the
+    // page doesn't stretch full-bleed across the browser window — instead
+    // grow the side padding evenly.
+    const contentMaxWidth = 1100.0;
+    final extraHorizontalPadding = screenSize.width > contentMaxWidth
+        ? (screenSize.width - contentMaxWidth) / 2
+        : 0.0;
+
     // Get selected subject color for bottom bar
     Color? selectedSubjectColor;
     if (_selectedSubjectId != null) {
@@ -204,7 +213,10 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
             ),
 
             SliverPadding(
-              padding: EdgeInsets.all(isTablet ? 32.0 : 24.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: (isTablet ? 32.0 : 24.0) + extraHorizontalPadding,
+                vertical: isTablet ? 32.0 : 24.0,
+              ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // Header section
@@ -294,7 +306,10 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                   ],
                 ),
                 child: SafeArea(
-                  child: Column(
+                  child: ResponsiveContent(
+                    maxWidth: 700,
+                    alignment: Alignment.center,
+                    child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Subject Selection Summary
@@ -403,6 +418,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               )
@@ -903,6 +919,14 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
     final isTablet = screenSize.width > 600;
     final subjectColor = Color(widget.subject['color']);
 
+    // On wide/desktop viewports, cap the content width and center it so the
+    // page doesn't stretch full-bleed across the browser window — instead
+    // grow the side padding evenly.
+    const contentMaxWidth = 1100.0;
+    final extraHorizontalPadding = screenSize.width > contentMaxWidth
+        ? (screenSize.width - contentMaxWidth) / 2
+        : 0.0;
+
     return Scaffold(
       backgroundColor: context.scheme.surface,
       body: FadeTransition(
@@ -964,7 +988,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
               SliverFillRemaining(child: _buildEmptyState(isTablet))
             else
               SliverPadding(
-                padding: EdgeInsets.all(isTablet ? 32.0 : 24.0),
+                padding: EdgeInsets.symmetric(
+                  horizontal: (isTablet ? 32.0 : 24.0) + extraHorizontalPadding,
+                  vertical: isTablet ? 32.0 : 24.0,
+                ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Header
@@ -1173,22 +1200,25 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
 
                     SizedBox(height: isTablet ? 20 : 16),
 
-                    // Topics list
-                    ...List.generate(_topics.length, (index) {
-                      final topic = _topics[index];
-                      final isSelected = _selectedTopics.contains(topic['id']);
+                    // Topics list — single column on mobile, a grid on
+                    // tablet/desktop instead of one long stretched column.
+                    ResponsiveGrid(
+                      minTileWidth: 320,
+                      spacing: isTablet ? 16 : 12,
+                      runSpacing: isTablet ? 16 : 12,
+                      children: List.generate(_topics.length, (index) {
+                        final topic = _topics[index];
+                        final isSelected = _selectedTopics.contains(topic['id']);
 
-                      return Container(
-                        margin: EdgeInsets.only(bottom: isTablet ? 16 : 12),
-                        child: _ResponsiveTopicCard(
+                        return _ResponsiveTopicCard(
                           topic: topic,
                           isSelected: isSelected,
                           subjectColor: subjectColor,
                           screenSize: screenSize,
                           onTap: () => _toggleTopic(topic['id']),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
+                    ),
 
                     SizedBox(height: isTablet ? 32 : 24),
                   ]),
@@ -1212,7 +1242,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                   ],
                 ),
                 child: SafeArea(
-                  child: Column(
+                  child: ResponsiveContent(
+                    maxWidth: 700,
+                    alignment: Alignment.center,
+                    child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Quiz Summary
@@ -1301,6 +1334,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               )

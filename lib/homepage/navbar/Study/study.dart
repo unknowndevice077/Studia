@@ -9,6 +9,7 @@ import 'topic.dart';
 import 'timer.dart';
 import 'ask_ai_screen.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 class Study extends StatefulWidget {
   const Study({super.key});
 
@@ -247,6 +248,16 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
     final cardPadding = isTablet ? 32.0 : 24.0;
     final cardRadius = isTablet ? 28.0 : 24.0;
 
+    // On wide/desktop viewports, cap the content width and center it so the
+    // page doesn't stretch full-bleed across the browser window — instead
+    // grow the side padding evenly.
+    const contentMaxWidth = 1200.0;
+    final extraHorizontalPadding = screenWidth > contentMaxWidth
+        ? (screenWidth - contentMaxWidth) / 2
+        : 0.0;
+    final effectiveHorizontalPadding = horizontalPadding + extraHorizontalPadding;
+    final classColumns = context.isDesktop ? 3 : context.isTablet ? 2 : 1;
+
     return Scaffold(
       backgroundColor: context.scheme.surface,
       body: FadeTransition(
@@ -280,7 +291,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
 
             SliverPadding(
               padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
+                horizontal: effectiveHorizontalPadding,
                 vertical: verticalPadding,
               ),
               sliver: SliverList(
@@ -535,35 +546,67 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                   );
                 }
 
+                final docs = snapshot.data!.docs;
+                final rowCount = (docs.length / classColumns).ceil();
+
+                Widget buildCard(int index) {
+                  final doc = docs[index];
+                  final data = doc.data() as Map<String, dynamic>;
+                  final Color cardColor = data['color'] != null
+                      ? Color(data['color'])
+                      : const Color(0xFF3B82F6);
+                  final docId = doc.id;
+
+                  return FutureBuilder<Map<String, dynamic>>(
+                    future: _getClassStats(docId),
+                    builder: (context, statsSnapshot) {
+                      final stats = statsSnapshot.data ?? {'studyTime': 0, 'topicCount': 0};
+                      return _ModernClassCard(
+                        data: data,
+                        cardColor: cardColor,
+                        docId: docId,
+                        index: index,
+                        screenSize: screenSize,
+                        studyTime: stats['studyTime'],
+                        topicCount: stats['topicCount'],
+                      );
+                    },
+                  );
+                }
+
                 return SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  padding: EdgeInsets.symmetric(horizontal: effectiveHorizontalPadding),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final doc = snapshot.data!.docs[index];
-                        final data = doc.data() as Map<String, dynamic>;
-                        final Color cardColor = data['color'] != null
-                            ? Color(data['color'])
-                            : const Color(0xFF3B82F6);
-                        final docId = doc.id;
+                      (context, rowIndex) {
+                        // Single column (mobile): one card per row, same as before.
+                        if (classColumns == 1) {
+                          return buildCard(rowIndex);
+                        }
 
-                        return FutureBuilder<Map<String, dynamic>>(
-                          future: _getClassStats(docId),
-                          builder: (context, statsSnapshot) {
-                            final stats = statsSnapshot.data ?? {'studyTime': 0, 'topicCount': 0};
-                            return _ModernClassCard(
-                              data: data,
-                              cardColor: cardColor,
-                              docId: docId,
-                              index: index,
-                              screenSize: screenSize,
-                              studyTime: stats['studyTime'],
-                              topicCount: stats['topicCount'],
-                            );
-                          },
+                        // Tablet/desktop: lay cards out in a grid of equal-height
+                        // rows instead of a single column stretched full-width.
+                        final start = rowIndex * classColumns;
+                        final end = (start + classColumns).clamp(0, docs.length);
+                        return IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              for (var i = start; i < end; i++) ...[
+                                Expanded(child: buildCard(i)),
+                                if (i != end - 1) SizedBox(width: isTablet ? 16.0 : 12.0),
+                              ],
+                              // Pad out an incomplete last row so cards keep a
+                              // consistent width instead of stretching.
+                              for (var i = end; i < start + classColumns; i++) ...[
+                                const SizedBox(width: 16),
+                                const Expanded(child: SizedBox.shrink()),
+                              ],
+                            ],
+                          ),
                         );
                       },
-                      childCount: snapshot.data!.docs.length,
+                      childCount: rowCount,
                     ),
                   )
                 );

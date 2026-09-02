@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:app/providers/profile_picture_provider.dart';
 import 'package:app/login/Auth.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class Homecontent extends StatefulWidget {
   final String? greeting; // ✅ Add this line
@@ -330,6 +331,17 @@ class _HomecontentState extends State<Homecontent> {
 
     final titleFontSize = 32.0; // Or use your responsive logic if needed
 
+    // On wide/desktop viewports, cap the content width and center it so the
+    // dashboard doesn't stretch full-bleed across the browser window —
+    // instead grow the side padding evenly, same pattern as Study/Home.
+    final screenWidth = context.screenWidth;
+    const contentMaxWidth = 1100.0;
+    final extraHorizontalPadding = screenWidth > contentMaxWidth
+        ? (screenWidth - contentMaxWidth) / 2
+        : 0.0;
+    final isWide = context.isWide;
+    final horizontalInset = 24.0 + extraHorizontalPadding;
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -340,8 +352,8 @@ class _HomecontentState extends State<Homecontent> {
             width: double.infinity,
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + 16,
-              left: 24,
-              right: 24,
+              left: horizontalInset,
+              right: horizontalInset,
               bottom: 16,
             ),
             child: Row(
@@ -420,53 +432,77 @@ class _HomecontentState extends State<Homecontent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Statistics Row
-                SizedBox(
-                  height: 150,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      children: [
-                        _StatsCard(
-                          label: "Total Study Time",
-                          value: _totalStudyHours,
-                          color: Colors.blueAccent,
-                          icon: Icons.access_time_rounded,
-                          isHours: true,
+                // Statistics Row — a horizontally scrolling strip of compact
+                // cards on mobile, and an evenly-spread non-scrolling row
+                // that fills the (capped) content width on tablet/desktop.
+                Builder(
+                  builder: (context) {
+                    final statCards = <Widget>[
+                      _StatsCard(
+                        label: "Total Study Time",
+                        value: _totalStudyHours,
+                        color: Colors.blueAccent,
+                        icon: Icons.access_time_rounded,
+                        isHours: true,
+                      ),
+                      _CountCard(
+                        label: "Total Classes",
+                        count: _totalClasses,
+                        color: Colors.green,
+                        icon: Icons.school,
+                      ),
+                      _CountCard(
+                        label: "Total Exams",
+                        count: _totalExams,
+                        color: Colors.red,
+                        icon: Icons.quiz,
+                      ),
+                      FutureBuilder<int>(
+                        future: getTotalDeadlines(),
+                        builder: (context, snapshot) {
+                          final count = snapshot.data ?? 0;
+                          return _CountCard(
+                            label: "Total Deadlines",
+                            count: count,
+                            color: Colors.orange,
+                            icon: Icons.assignment_late,
+                          );
+                        },
+                      ),
+                    ];
+
+                    if (!isWide) {
+                      return SizedBox(
+                        height: 150,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: horizontalInset - 12,
+                          ),
+                          child: Row(children: statCards),
                         ),
-                        _CountCard(
-                          label: "Total Classes",
-                          count: _totalClasses,
-                          color: Colors.green,
-                          icon: Icons.school,
+                      );
+                    }
+
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: horizontalInset - 12,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          children: [
+                            for (final card in statCards) Expanded(child: card),
+                          ],
                         ),
-                        _CountCard(
-                          label: "Total Exams",
-                          count: _totalExams,
-                          color: Colors.red,
-                          icon: Icons.quiz,
-                        ),
-                        FutureBuilder<int>(
-                          future: getTotalDeadlines(),
-                          builder: (context, snapshot) {
-                            final count = snapshot.data ?? 0;
-                            return _CountCard(
-                              label: "Total Deadlines",
-                              count: count,
-                              color: Colors.orange,
-                              icon: Icons.assignment_late,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
                 // Today's Classes Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalInset),
                   child: Text(
                     "Today's Classes",
                     style: GoogleFonts.dmSerifText(
@@ -482,6 +518,7 @@ class _HomecontentState extends State<Homecontent> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: extraHorizontalPadding),
                     itemCount: 7,
                     itemBuilder: (context, index) {
                       final date = firstDayOfWeek.add(Duration(days: index));
@@ -677,8 +714,18 @@ class _HomecontentState extends State<Homecontent> {
                 );
               }
 
-              return Column(
-                children: List.generate(todayClasses.length, (index) {
+              // On mobile this stays a single stretched column, same as
+              // before; on tablet/desktop the per-day class blocks (card +
+              // its events) wrap into a multi-column grid instead of
+              // stretching full-bleed across the wide viewport.
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalInset),
+                child: ResponsiveGrid(
+                  minTileWidth: 380,
+                  spacing: 16,
+                  runSpacing: 8,
+                  maxColumns: 2,
+                  children: List.generate(todayClasses.length, (index) {
                   final doc = todayClasses[index];
                   final data = doc.data() as Map<String, dynamic>;
                   final classModel = ClassModel(
@@ -997,7 +1044,8 @@ class _HomecontentState extends State<Homecontent> {
                       ],
                     ),
                   );
-                }),
+                  }),
+                ),
               );
             },
           ),

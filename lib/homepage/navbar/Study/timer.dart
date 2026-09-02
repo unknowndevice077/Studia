@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/theme/responsive.dart';
 
 // Study Timer Page with a simple start/stop timer
 class StudyTimerPage extends StatefulWidget {
@@ -814,7 +815,11 @@ class _StudyTimerPageState extends State<StudyTimerPage>
       child: Scaffold(
         backgroundColor: const Color(0xFF2C2C2C), // Singular dark grey background
         body: SafeArea(
-          child: Column(
+          // Cap the timer UI to a comfortable width and center it so it
+          // doesn't stretch into a giant circle on wide/desktop screens.
+          child: ResponsiveContent(
+            maxWidth: 700,
+            child: Column(
             children: [
               // Modern AppBar
               Padding(
@@ -1144,6 +1149,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),

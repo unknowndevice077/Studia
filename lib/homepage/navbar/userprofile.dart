@@ -10,6 +10,12 @@ import 'package:app/providers/profile_picture_provider.dart';
 import 'package:app/login/auth.dart'; // Adjust the path according to your project structure
 import 'package:app/providers/theme_provider.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
+
+// Profile/settings screens are mostly stacked form fields, so they read best
+// with a comfortably narrow, centered column on wide screens rather than the
+// wider caps used by list-style screens.
+const double kProfileContentMaxWidth = 720;
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -207,7 +213,9 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
       curve: Curves.easeInOut,
       height: _showAvatarSelector ? 320 : 0, // Increased height for bigger container
       child: _showAvatarSelector
-          ? Container(
+          ? ResponsiveContent(
+              maxWidth: kProfileContentMaxWidth,
+              child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: context.scheme.surfaceContainer,
@@ -286,8 +294,12 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                             GridView.builder(
                               shrinkWrap: true, // ✅ Important for nested scroll
                               physics: const NeverScrollableScrollPhysics(), // ✅ Let parent handle scrolling
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4, // ✅ Better spacing with 4 columns
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: context.responsive(
+                                  mobile: 4,
+                                  tablet: 5,
+                                  desktop: 6,
+                                ), // ✅ More columns as the selector has room to grow
                                 crossAxisSpacing: 12,
                                 mainAxisSpacing: 12,
                                 childAspectRatio: 1.0,
@@ -308,7 +320,9 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                   ),
                 ],
               ),
-            ) : const SizedBox(),
+              ),
+            )
+          : const SizedBox(),
     );
   }
 
@@ -494,9 +508,10 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
     required TextEditingController controller,
     required bool enabled,
     TextInputType? keyboardType,
+    EdgeInsetsGeometry margin = const EdgeInsets.only(bottom: 16),
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: margin,
       decoration: BoxDecoration(
         color: context.scheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16),
@@ -562,6 +577,57 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
           ],
         ),
       ),
+    );
+  }
+
+  // ✅ Username/Email/Phone fields: stacked on mobile; on tablet/desktop the
+  // two editable fields (Username, Phone) sit side by side, with the
+  // read-only Email field on its own full-width row underneath.
+  Widget _buildContactFields(bool isWide) {
+    final usernameField = _buildInfoCard(
+      icon: Icons.person_outline,
+      label: 'Username',
+      controller: _usernameController,
+      enabled: _isEditMode,
+      margin: isWide ? EdgeInsets.zero : const EdgeInsets.only(bottom: 16),
+    );
+
+    final emailField = _buildInfoCard(
+      icon: Icons.email_outlined,
+      label: 'Email',
+      controller: _emailController,
+      enabled: false,
+      keyboardType: TextInputType.emailAddress,
+    );
+
+    final phoneField = _buildInfoCard(
+      icon: Icons.phone_outlined,
+      label: 'Phone Number',
+      controller: _phoneController,
+      enabled: _isEditMode,
+      keyboardType: TextInputType.phone,
+      margin: isWide ? EdgeInsets.zero : const EdgeInsets.only(bottom: 16),
+    );
+
+    if (!isWide) {
+      return Column(children: [usernameField, emailField, phoneField]);
+    }
+
+    return Column(
+      children: [
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: usernameField),
+              const SizedBox(width: 16),
+              Expanded(child: phoneField),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        emailField,
+      ],
     );
   }
 
@@ -746,8 +812,12 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     print('_isEditMode: $_isEditMode');
-    final screenSize = MediaQuery.of(context).size;
-    final isTablet = screenSize.width > 600;
+    // isTablet is used loosely below to mean "not a phone" (tablet or
+    // desktop) — it drives slightly larger type/spacing, while the actual
+    // width capping/centering on wide screens is handled by
+    // ResponsiveContent further down.
+    final isTablet = context.isWide;
+    final isDesktop = context.isDesktop;
 
     return Scaffold(
       backgroundColor: context.scheme.surface,
@@ -773,7 +843,9 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: Column(
+                    child: ResponsiveContent(
+                      maxWidth: kProfileContentMaxWidth,
+                      child: Column(
                       children: [
                         // Header with back button and edit button
                         Padding(
@@ -908,6 +980,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                           ),
                         ),
                       ],
+                      ),
                     ),
                   ),
                 ),
@@ -923,8 +996,13 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                   color: context.scheme.surface,
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(isTablet ? 32 : 24),
-                  child: Column(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? 40 : (isTablet ? 32 : 24),
+                    vertical: isTablet ? 32 : 24,
+                  ),
+                  child: ResponsiveContent(
+                    maxWidth: kProfileContentMaxWidth,
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -936,32 +1014,9 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                         ),
                       ),
                       const SizedBox(height: 24),
-                      
-                      // Username Field
-                      _buildInfoCard(
-                        icon: Icons.person_outline,
-                        label: 'Username',
-                        controller: _usernameController,
-                        enabled: _isEditMode,
-                      ),
 
-                      // Email Field (Read-only)
-                      _buildInfoCard(
-                        icon: Icons.email_outlined,
-                        label: 'Email',
-                        controller: _emailController,
-                        enabled: false,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-
-                      // Phone Field
-                      _buildInfoCard(
-                        icon: Icons.phone_outlined,
-                        label: 'Phone Number',
-                        controller: _phoneController,
-                        enabled: _isEditMode,
-                        keyboardType: TextInputType.phone,
-                      ),
+                      // Username / Email / Phone fields
+                      _buildContactFields(isTablet),
 
                       const SizedBox(height: 32),
 
@@ -1149,6 +1204,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       // Bottom spacing
                       const SizedBox(height: 32),
                     ],
+                    ),
                   ),
                 ),
               ),

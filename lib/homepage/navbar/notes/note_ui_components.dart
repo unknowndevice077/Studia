@@ -10,6 +10,7 @@ import 'attachments.dart' as attach;
 import 'todo.dart';
 import 'notes.dart' show AddNoteScreen;
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class NoteUIComponents {
   final NoteDataManager _dataManager = NoteDataManager();
@@ -144,165 +145,189 @@ class NoteUIComponents {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final doc = docs[index];
-            final data = doc.data() as Map<String, dynamic>;
-            final title = data['title'] ?? 'Untitled';
-            final content = data['content'] ?? '';
-            final subject = data['subject'] ?? '';
-            final updatedAt = (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+        // On tablet/desktop, cap and center the content width and lay the
+        // note cards out in a responsive grid instead of a single stretched
+        // column; mobile keeps the original single-column list.
+        final horizontalPadding = context.responsive(
+          mobile: 16.0,
+          tablet: 24.0,
+          desktop: 32.0,
+        );
 
-            return FutureBuilder<Color>(
-              future: subject.isNotEmpty 
-                  ? _subjectManager.getClassColor(subject) 
-                  : Future.value(Colors.blueGrey[400]!),
-              builder: (context, colorSnapshot) {
-                final classColor = colorSnapshot.data ?? Colors.blueGrey[400]!;
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 8),
+          child: ResponsiveContent(
+            child: ResponsiveGrid(
+              minTileWidth: 340,
+              spacing: 16,
+              runSpacing: 12,
+              children: [
+                for (final doc in docs)
+                  _buildNoteCard(context, doc, editMode, onDeleteNote),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: context.scheme.surfaceContainer,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: classColor, width: 2.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: classColor.withOpacity(0.15),
-                        blurRadius: 12,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+  Widget _buildNoteCard(
+    BuildContext context,
+    QueryDocumentSnapshot doc,
+    bool editMode,
+    Function(String) onDeleteNote,
+  ) {
+    final data = doc.data() as Map<String, dynamic>;
+    final title = data['title'] ?? 'Untitled';
+    final content = data['content'] ?? '';
+    final subject = data['subject'] ?? '';
+    final updatedAt = (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+
+    return FutureBuilder<Color>(
+      future: subject.isNotEmpty
+          ? _subjectManager.getClassColor(subject)
+          : Future.value(Colors.blueGrey[400]!),
+      builder: (context, colorSnapshot) {
+        final classColor = colorSnapshot.data ?? Colors.blueGrey[400]!;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: context.scheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: classColor, width: 2.5),
+            boxShadow: [
+              BoxShadow(
+                color: classColor.withOpacity(0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                print('Opening note: $title with ID: ${doc.id}');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddNoteScreen(
+                      onBack: () => Navigator.pop(context),
+                      docId: doc.id,
+                      initialTitle: title,
+                      initialSubject: subject,
+                    ),
                   ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        print('Opening note: $title with ID: ${doc.id}');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddNoteScreen(
-                              onBack: () => Navigator.pop(context),
-                              docId: doc.id,
-                              initialTitle: title,
-                              initialSubject: subject,
-                            ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: classColor,
+                            shape: BoxShape.circle,
                           ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: classColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    title,
-                                    style: GoogleFonts.dmSerifText(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: context.scheme.onSurface,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                if (editMode)
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                                    onPressed: () => onDeleteNote(doc.id),
-                                  ),
-                              ],
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: GoogleFonts.dmSerifText(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: context.scheme.onSurface,
                             ),
-                            if (subject.isNotEmpty) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: classColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: classColor.withOpacity(0.3), width: 1),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.book, color: classColor, size: 14),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      subject,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 12,
-                                        color: classColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (editMode)
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                            onPressed: () => onDeleteNote(doc.id),
+                          ),
+                      ],
+                    ),
+                    if (subject.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: classColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: classColor.withOpacity(0.3), width: 1),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.book, color: classColor, size: 14),
+                            const SizedBox(width: 6),
+                            Text(
+                              subject,
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: classColor,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ],
-                            if (content.isNotEmpty) ...[
-                              const SizedBox(height: 12),
-                              Text(
-                                content,
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: context.scheme.onSurfaceVariant,
-                                  height: 1.4,
-                                ),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Icon(Icons.access_time, size: 14, color: context.scheme.onSurfaceVariant),
-                                const SizedBox(width: 4),
-                                Text(
-                                  _formatDateTime(updatedAt),
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12,
-                                    color: context.scheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                const Spacer(),
-                                if (data['tasks'] != null && (data['tasks'] as List).isNotEmpty) ...[
-                                  Icon(Icons.check_circle_outline, size: 14, color: classColor),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${(data['tasks'] as List).length} tasks',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      color: classColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ],
                             ),
                           ],
                         ),
                       ),
+                    ],
+                    if (content.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        content,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: context.scheme.onSurfaceVariant,
+                          height: 1.4,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Icon(Icons.access_time, size: 14, color: context.scheme.onSurfaceVariant),
+                        const SizedBox(width: 4),
+                        Text(
+                          _formatDateTime(updatedAt),
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: context.scheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (data['tasks'] != null && (data['tasks'] as List).isNotEmpty) ...[
+                          Icon(Icons.check_circle_outline, size: 14, color: classColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${(data['tasks'] as List).length} tasks',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: classColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ));
-              },
-            );
-          },
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -408,7 +433,9 @@ class NoteUIComponents {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
+              child: ResponsiveContent(
+                maxWidth: 800,
+                child: Column(
                 children: [
                   // Title Field
                   TextField(
@@ -481,17 +508,21 @@ class NoteUIComponents {
                       onAttachmentRemove,
                     ),
                 ],
+                ),
               ),
             ),
           ),
-          
+
           // Toolbar using your design
-          _buildToolbar(
-            context,
-            selectedSubject,
-            tasks,
-            onImagePicker,
-            onAttachmentOptions,
+          ResponsiveContent(
+            maxWidth: 800,
+            child: _buildToolbar(
+              context,
+              selectedSubject,
+              tasks,
+              onImagePicker,
+              onAttachmentOptions,
+            ),
           ),
         ],
       ),

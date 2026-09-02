@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/theme/responsive.dart';
 
 void main() => runApp(MaterialApp(home: ClassSchedulePage()));
 
@@ -30,7 +31,9 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
             right: 20,
             top: 20,
           ),
-          child: Form(
+          child: ResponsiveContent(
+            maxWidth: 480,
+            child: Form(
             key: formKey,
             child: Wrap(
               children: [
@@ -80,6 +83,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 const SizedBox(height: 30),
               ],
             ),
+            ),
           ),
         );
       },
@@ -90,16 +94,39 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("My Classes")),
-      body: ListView(
-        children: classes.map((cls) {
-          return ExpandableClassCard(
-            title: cls['title'] ?? '',
-            teacher: cls['teacher'] ?? '',
-            time: cls['time'] ?? '',
-            date: cls['date'] ?? '',
-            room: cls['room'] ?? '',
-          );
-        }).toList(),
+      // Cards stay a single stretched column on mobile; on tablet/desktop
+      // they wrap into a centered, width-capped grid instead of stretching
+      // full-bleed across the window.
+      body: ResponsiveContent(
+        maxWidth: 900,
+        child: context.isWide
+            ? SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: ResponsiveGrid(
+                  minTileWidth: 320,
+                  maxColumns: 2,
+                  children: classes.map((cls) {
+                    return ExpandableClassCard(
+                      title: cls['title'] ?? '',
+                      teacher: cls['teacher'] ?? '',
+                      time: cls['time'] ?? '',
+                      date: cls['date'] ?? '',
+                      room: cls['room'] ?? '',
+                    );
+                  }).toList(),
+                ),
+              )
+            : ListView(
+                children: classes.map((cls) {
+                  return ExpandableClassCard(
+                    title: cls['title'] ?? '',
+                    teacher: cls['teacher'] ?? '',
+                    time: cls['time'] ?? '',
+                    date: cls['date'] ?? '',
+                    room: cls['room'] ?? '',
+                  );
+                }).toList(),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddClassForm,

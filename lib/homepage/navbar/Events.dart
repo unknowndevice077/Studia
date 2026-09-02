@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/theme/app_theme.dart';
+import 'package:app/theme/responsive.dart';
 
 class Events extends StatefulWidget {
   const Events({super.key});
@@ -293,194 +294,292 @@ class _EventsState extends State<Events> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2100, 12, 31),
-            focusedDay: _focusedDay,
-            calendarFormat: CalendarFormat.month,
-            availableCalendarFormats: const {
-              CalendarFormat.month: 'Month',
+      body: SafeArea(
+        child: ResponsiveContent(
+          maxWidth: 1100,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Decide on a side-by-side calendar + event-list panel layout
+              // based on the *available* width (after the content-width cap
+              // above kicks in), rather than raw screen width, so a wide
+              // browser window doesn't force a cramped split once the
+              // content is already capped.
+              final isSideBySide = constraints.maxWidth >= 700;
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSideBySide ? 16 : 0,
+                  vertical: isSideBySide ? 16 : 0,
+                ),
+                child: isSideBySide
+                    ? _buildWideLayout(context)
+                    : _buildNarrowLayout(context),
+              );
             },
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            eventLoader: _getEventsForDay,
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: Colors.blueAccent,
-                shape: BoxShape.circle,
-              ),
-              markerDecoration: BoxDecoration(
-                color: Colors.orange,
-                shape: BoxShape.circle,
-              ),
-            ),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
-              leftChevronIcon: const Icon(Icons.chevron_left, size: 28),
-              rightChevronIcon: const Icon(Icons.chevron_right, size: 28),
-            ),
-            onDaySelected: (selectedDay, focusedDay) {
-              if (mounted) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              }
-            },
-            calendarBuilders: CalendarBuilders(
-              markerBuilder: (context, date, events) {
-                if (events.isEmpty) return const SizedBox.shrink();
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(events.length, (index) {
-                    final event = events[index] as Map<String, dynamic>;
-                    Color dotColor;
-                    switch (event['type']) {
-                      case 'exam':
-                        dotColor = Colors.red;
-                        break;
-                      case 'deadline':
-                        dotColor = Colors.orange;
-                        break;
-                      case 'class':
-                        dotColor = Colors.blue;
-                        break;
-                      default:
-                        dotColor = Colors.grey;
-                    }
-                    return Container(
-                      width: 7,
-                      height: 7,
-                      margin: const EdgeInsets.symmetric(horizontal: 0.5),
-                      decoration: BoxDecoration(
-                        color: dotColor,
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  }),
-                );
-              },
-            ),
           ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: _selectedDay == null
-                ? Center(
-                    child: Text(
-                      'Select a day to see your events.',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  )
-                : _getEventsForDay(_selectedDay!).isEmpty
-                    ? Center(
-                        child: Text(
-                          'No events for this day.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.scheme.onSurfaceVariant),
-                        ),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        itemCount: _getEventsForDay(_selectedDay!).length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
-                        itemBuilder: (context, idx) {
-                          final event = _getEventsForDay(_selectedDay!)[idx];
-                          final isExam = event['type'] == 'exam';
-                          final isDeadline = event['type'] == 'deadline';
-                          final iconData = isExam
-                              ? Icons.school
-                              : isDeadline
-                                  ? Icons.event_note
-                                  : Icons.event;
-                          final iconColor = isExam
-                              ? Colors.red
-                              : isDeadline
-                                  ? Colors.yellow[700]
-                                  : Colors.blue;
-                          final cardColor = Theme.of(context).cardColor;
-                          final textColor = Theme.of(context).textTheme.bodyLarge?.color;
-
-                          return Card(
-                            color: cardColor,
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: iconColor!.withOpacity(0.15),
-                                child: Icon(iconData, color: iconColor),
-                              ),
-                              title: Text(
-                                event['title'] ?? '',
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              subtitle: Text(
-                                event['classTitle'] ?? '',
-                                style: TextStyle(
-                                  color: textColor?.withOpacity(0.7),
-                                ),
-                              ),
-                              trailing: (_editMode && event['type'] != 'class')
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.edit, color: Colors.blue),
-                                          tooltip: 'Edit Event',
-                                          onPressed: () async {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (context) => EditEventDialog(event: event),
-                                            );
-                                            if (mounted) _fetchClasses();
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete, color: Colors.red),
-                                          tooltip: 'Delete Event',
-                                          onPressed: () async {
-                                            final confirm = await showDialog<bool>(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                title: const Text('Delete Event'),
-                                                content: const Text('Are you sure you want to delete this event?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () => Navigator.pop(context, false),
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () => Navigator.pop(context, true),
-                                                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                            if (confirm == true && mounted) {
-                                              await _deleteEventById(event['id']);
-                                              _fetchClasses();
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    )
-                                  : null,
-                            ),
-                          );
-                        },
-                      ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  // Mobile: calendar stacked above the event list, exactly as before.
+  Widget _buildNarrowLayout(BuildContext context) {
+    return Column(
+      children: [
+        _buildCalendar(context),
+        const SizedBox(height: 8),
+        Expanded(child: _buildEventListPanel(context)),
+      ],
+    );
+  }
+
+  // Tablet/desktop: calendar and event list side by side, each in its own
+  // card, instead of the calendar sitting alone above a stretched list.
+  Widget _buildWideLayout(BuildContext context) {
+    final cardDecoration = BoxDecoration(
+      color: context.scheme.surfaceContainer,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: context.scheme.outlineVariant),
+      boxShadow: [
+        BoxShadow(
+          color: context.colors.shadow,
+          blurRadius: 20,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 5,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: cardDecoration,
+            child: _buildCalendar(context),
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          flex: 4,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: cardDecoration,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _selectedDay == null
+                      ? 'Events'
+                      : 'Events for ${_selectedDay!.day}/${_selectedDay!.month}/${_selectedDay!.year}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.scheme.onSurface,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: _buildEventListPanel(context, insideCard: true),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalendar(BuildContext context) {
+    return TableCalendar(
+      firstDay: DateTime.utc(2020, 1, 1),
+      lastDay: DateTime.utc(2100, 12, 31),
+      focusedDay: _focusedDay,
+      calendarFormat: CalendarFormat.month,
+      availableCalendarFormats: const {
+        CalendarFormat.month: 'Month',
+      },
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      eventLoader: _getEventsForDay,
+      calendarStyle: CalendarStyle(
+        todayDecoration: BoxDecoration(
+          color: Colors.blueAccent.withOpacity(0.2),
+          shape: BoxShape.circle,
+        ),
+        selectedDecoration: BoxDecoration(
+          color: Colors.blueAccent,
+          shape: BoxShape.circle,
+        ),
+        markerDecoration: BoxDecoration(
+          color: Colors.orange,
+          shape: BoxShape.circle,
+        ),
+      ),
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+        titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+        leftChevronIcon: const Icon(Icons.chevron_left, size: 28),
+        rightChevronIcon: const Icon(Icons.chevron_right, size: 28),
+      ),
+      onDaySelected: (selectedDay, focusedDay) {
+        if (mounted) {
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+          });
+        }
+      },
+      calendarBuilders: CalendarBuilders(
+        markerBuilder: (context, date, events) {
+          if (events.isEmpty) return const SizedBox.shrink();
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(events.length, (index) {
+              final event = events[index] as Map<String, dynamic>;
+              Color dotColor;
+              switch (event['type']) {
+                case 'exam':
+                  dotColor = Colors.red;
+                  break;
+                case 'deadline':
+                  dotColor = Colors.orange;
+                  break;
+                case 'class':
+                  dotColor = Colors.blue;
+                  break;
+                default:
+                  dotColor = Colors.grey;
+              }
+              return Container(
+                width: 7,
+                height: 7,
+                margin: const EdgeInsets.symmetric(horizontal: 0.5),
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+
+  // [insideCard] is true when this panel is already sitting inside a padded
+  // card (the wide side-by-side layout) so it doesn't need its own outer
+  // horizontal padding on top of the card's.
+  Widget _buildEventListPanel(BuildContext context, {bool insideCard = false}) {
+    return _selectedDay == null
+        ? Center(
+            child: Text(
+              'Select a day to see your events.',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          )
+        : _getEventsForDay(_selectedDay!).isEmpty
+            ? Center(
+                child: Text(
+                  'No events for this day.',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.scheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            : ListView.separated(
+                padding: insideCard
+                    ? const EdgeInsets.symmetric(vertical: 4)
+                    : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                itemCount: _getEventsForDay(_selectedDay!).length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, idx) {
+                  final event = _getEventsForDay(_selectedDay!)[idx];
+                  final isExam = event['type'] == 'exam';
+                  final isDeadline = event['type'] == 'deadline';
+                  final iconData = isExam
+                      ? Icons.school
+                      : isDeadline
+                          ? Icons.event_note
+                          : Icons.event;
+                  final iconColor = isExam
+                      ? Colors.red
+                      : isDeadline
+                          ? Colors.yellow[700]
+                          : Colors.blue;
+                  final cardColor = Theme.of(context).cardColor;
+                  final textColor = Theme.of(context).textTheme.bodyLarge?.color;
+
+                  return Card(
+                    color: cardColor,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: iconColor!.withOpacity(0.15),
+                        child: Icon(iconData, color: iconColor),
+                      ),
+                      title: Text(
+                        event['title'] ?? '',
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(
+                        event['classTitle'] ?? '',
+                        style: TextStyle(
+                          color: textColor?.withOpacity(0.7),
+                        ),
+                      ),
+                      trailing: (_editMode && event['type'] != 'class')
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  tooltip: 'Edit Event',
+                                  onPressed: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) => EditEventDialog(event: event),
+                                    );
+                                    if (mounted) _fetchClasses();
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  tooltip: 'Delete Event',
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete Event'),
+                                        content: const Text('Are you sure you want to delete this event?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, true),
+                                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true && mounted) {
+                                      await _deleteEventById(event['id']);
+                                      _fetchClasses();
+                                    }
+                                  },
+                                ),
+                              ],
+                            )
+                          : null,
+                    ),
+                  );
+                },
+              );
   }
 }
 

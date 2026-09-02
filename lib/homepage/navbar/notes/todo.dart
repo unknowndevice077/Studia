@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/theme/responsive.dart';
 
 class TodoTask {
   final String id;
@@ -215,7 +216,9 @@ class _TodoManagerState extends State<TodoManager> {
               : [const Color(0xFFF8FAFC), const Color(0xFFFFFFFF)],
           ),
         ),
-        child: Column(
+        child: ResponsiveContent(
+          maxWidth: 720,
+          child: Column(
           children: [
             // ✅ Responsive Header with Progress
             Container(
@@ -397,6 +400,7 @@ class _TodoManagerState extends State<TodoManager> {
                 ),
               ),
           ],
+          ),
         ),
       ),
     );

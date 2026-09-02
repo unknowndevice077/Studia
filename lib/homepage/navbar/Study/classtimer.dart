@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/theme/responsive.dart';
 
 // Class Timer Page with circular ball animation - separate from general timer
 class ClassTimer extends StatefulWidget {
@@ -804,7 +805,11 @@ class _ClassTimerState extends State<ClassTimer>
       child: Scaffold(
         backgroundColor: const Color(0xFF2C2C2C), // Singular dark grey background
         body: SafeArea(
-          child: Column(
+          // Cap the timer UI to a comfortable width and center it so it
+          // doesn't stretch into a giant circle on wide/desktop screens.
+          child: ResponsiveContent(
+            maxWidth: 700,
+            child: Column(
             children: [
               // Modern AppBar
               Padding(
@@ -1134,6 +1139,7 @@ class _ClassTimerState extends State<ClassTimer>
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),
