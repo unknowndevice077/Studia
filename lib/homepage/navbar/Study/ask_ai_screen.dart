@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:app/services/gemini_service.dart';
 
 class AskAiScreen extends StatefulWidget {
   const AskAiScreen({super.key});
@@ -34,15 +34,7 @@ class _AskAiScreenState extends State<AskAiScreen> {
     _addMessage(_ChatMessage(text: text, isUser: true));
 
     try {
-      final model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-2.0-flash',
-      );
-      final prompt = [
-        Content.text(text),
-      ];
-      final response = await model.generateContent(prompt);
-
-      String aiText = response.text?.trim() ?? "Sorry, I couldn't generate a response.";
+      final aiText = await askGemini(text);
       await _showTypingAnimation(aiText);
     } catch (e) {
       _addMessage(_ChatMessage(
@@ -141,12 +133,13 @@ class _AskAiScreenState extends State<AskAiScreen> {
                               color: msg.isUser ? Colors.blue[700] : Colors.grey[900],
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Text(
+                            child: SelectableText(
                               msg.text,
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 15,
                               ),
+                              cursorColor: Colors.white,
                             ),
                           ),
                         ),

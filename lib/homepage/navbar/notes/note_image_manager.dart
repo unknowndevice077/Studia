@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'image_handler.dart';
+import 'package:app/theme/app_theme.dart';
 
 class NoteImageManager {
   void showImagePicker(
@@ -14,7 +15,7 @@ class NoteImageManager {
       builder: (context) => Container(
         margin: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.scheme.surfaceContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -25,7 +26,7 @@ class NoteImageManager {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: context.scheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

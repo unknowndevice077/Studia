@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:app/services/gemini_service.dart';
 
 class QuizOverviewScreen extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -89,12 +89,7 @@ class _QuizOverviewScreenState extends State<QuizOverviewScreen>
       final response = widget.quizResponses[questionIndex];
       final question = widget.questions[questionIndex];
       
-      final model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-2.0-flash',
-      );
-
-      final prompt = [
-        Content.text('''
+      final promptText = '''
 
 dont repeat the question or answers, just provide a clear explanation.
 You are an educational AI tutor. A student just answered a quiz question incorrectly. Please provide a clear, helpful explanation.
@@ -120,19 +115,14 @@ Keep the explanation:
 - Age-appropriate for students
 
 Format the response as plain text, no special formatting needed.
-'''),
-      ];
+''';
 
-      final aiResponse = await model.generateContent(prompt);
-      
-      if (aiResponse.text != null) {
-        setState(() {
-          _aiExplanations[questionIndex] = aiResponse.text!;
-          _loadingExplanations[questionIndex] = false;
-        });
-      } else {
-        throw Exception('No response from AI');
-      }
+      final aiText = await askGemini(promptText);
+
+      setState(() {
+        _aiExplanations[questionIndex] = aiText;
+        _loadingExplanations[questionIndex] = false;
+      });
     } catch (e) {
       print('Error generating AI explanation: $e');
       setState(() {

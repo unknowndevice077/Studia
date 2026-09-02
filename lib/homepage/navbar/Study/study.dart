@@ -8,6 +8,7 @@ import 'dart:async';
 import 'topic.dart';
 import 'timer.dart';
 import 'ask_ai_screen.dart';
+import 'package:app/theme/app_theme.dart';
 class Study extends StatefulWidget {
   const Study({super.key});
 
@@ -130,7 +131,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              style: TextButton.styleFrom(foregroundColor: context.colors.danger),
               child: Text('Delete'),
             ),
           ],
@@ -181,7 +182,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                   Text('Topic deleted successfully'),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: context.colors.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               margin: EdgeInsets.all(16),
@@ -200,7 +201,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                 Text('Error deleting topic'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: EdgeInsets.all(16),
@@ -247,7 +248,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
     final cardRadius = isTablet ? 28.0 : 24.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: context.scheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -257,20 +258,20 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
               expandedHeight: isTablet ? 140.0 : 120.0,
               floating: false,
               pinned: true,
-              backgroundColor: Colors.white,
+              backgroundColor: context.scheme.surface,
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(
                   'Study Hub',
-                  style: GoogleFonts.dmSerifText(fontSize: 36, color: Colors.black), // ✅ CHANGED FONT
+                  style: GoogleFonts.dmSerifText(fontSize: 36, color: context.scheme.onSurface), // ✅ CHANGED FONT
                 ),
                 background: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.white, Color(0xFFF8FAFC)],
+                      colors: [context.scheme.surface, context.scheme.surfaceContainerLow],
                     ),
                   ),
                 ),
@@ -288,11 +289,11 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                   Container(
                     padding: EdgeInsets.all(cardPadding),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.scheme.surfaceContainer,
                       borderRadius: BorderRadius.circular(cardRadius),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: context.colors.shadow,
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -306,7 +307,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                           style: GoogleFonts.inter(
                             fontSize: isTablet ? 24.0 : 20.0,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black87,
+                            color: context.scheme.onSurface,
                           ),
                         ),
                         SizedBox(height: isTablet ? 12.0 : 8.0),
@@ -314,7 +315,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                           'Choose your study method',
                           style: GoogleFonts.inter(
                             fontSize: isTablet ? 16.0 : 14.0,
-                            color: Colors.grey[600],
+                            color: context.scheme.onSurfaceVariant,
                           ),
                         ),
                         SizedBox(height: isTablet ? 32.0 : 24.0),
@@ -424,7 +425,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 28.0 : 24.0,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: context.scheme.onSurface,
                             ),
                           ),
                           SizedBox(height: isTablet ? 6.0 : 4.0),
@@ -432,7 +433,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                             'Continue your learning journey',
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 16.0 : 14.0,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -451,7 +452,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                               vertical: isTablet ? 8.0 : 6.0,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF3B82F6).withOpacity(0.1),
+                              color: context.scheme.primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -459,7 +460,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                               style: GoogleFonts.inter(
                                 fontSize: isTablet ? 14.0 : 12.0,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3B82F6),
+                                color: context.scheme.primary,
                               ),
                             )
                           );
@@ -501,14 +502,14 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.error_outline, size: 64, color: Colors.red),
+                              Icon(Icons.error_outline, size: 64, color: context.colors.danger),
                               SizedBox(height: 16),
                               Text(
                                 'Error loading classes',
                                 style: GoogleFonts.inter(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.red,
+                                  color: context.colors.danger,
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -516,7 +517,7 @@ class _StudyState extends State<Study> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.symmetric(horizontal: 32),
                                 child: Text(
                                   'Please check your connection and try again',
-                                  style: GoogleFonts.inter(color: Colors.grey[600]),
+                                  style: GoogleFonts.inter(color: context.scheme.onSurfaceVariant),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -705,12 +706,12 @@ class _ModernClassCard extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-            border: Border.all(color: Colors.grey[100]!),
+            border: Border.all(color: context.scheme.outlineVariant),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: context.colors.shadow,
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -767,7 +768,7 @@ class _ModernClassCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 22 : 18,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: context.scheme.onSurface,
                               height: 1.2,
                             ),
                             maxLines: 2,
@@ -779,7 +780,7 @@ class _ModernClassCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 16 : 14,
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -789,7 +790,7 @@ class _ModernClassCard extends StatelessWidget {
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.grey[400],
+                      color: context.scheme.onSurfaceVariant,
                       size: isTablet ? 24 : 20,
                     ),
                   ],
@@ -832,7 +833,7 @@ class _ModernClassCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(isTablet ? 20 : 16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: context.scheme.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
@@ -911,7 +912,7 @@ class _StatItem extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: isTablet ? 14 : 12,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -939,13 +940,13 @@ class _DetailRow extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(isTablet ? 10 : 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
             size: isTablet ? 18 : 16,
-            color: Colors.grey[600],
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         SizedBox(width: isTablet ? 16 : 12),
@@ -955,7 +956,7 @@ class _DetailRow extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: isTablet ? 16 : 14,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: context.scheme.onSurfaceVariant,
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -1161,14 +1162,14 @@ class _ResponsiveEmptyState extends StatelessWidget {
             children: [
               Container(
                 padding: EdgeInsets.all(isTablet ? 40 : 32),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF1F5F9),
+                decoration: BoxDecoration(
+                  color: context.scheme.surfaceContainerHigh,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.school_outlined,
                   size: iconSize,
-                  color: const Color(0xFF64748B),
+                  color: context.scheme.onSurfaceVariant,
                 ),
               ),
               SizedBox(height: isTablet ? 32 : 24),
@@ -1177,7 +1178,7 @@ class _ResponsiveEmptyState extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: titleFontSize,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1E293B),
+                  color: context.scheme.onSurface,
                 ),
               ),
               SizedBox(height: isTablet ? 12 : 8),
@@ -1187,7 +1188,7 @@ class _ResponsiveEmptyState extends StatelessWidget {
                   'Your classes will appear here once you create them',
                   style: GoogleFonts.inter(
                     fontSize: subtitleFontSize,
-                    color: const Color(0xFF64748B),
+                    color: context.scheme.onSurfaceVariant,
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,
@@ -1201,16 +1202,16 @@ class _ResponsiveEmptyState extends StatelessWidget {
                   vertical: isTablet ? 16 : 12,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: context.scheme.primary.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue[100]!),
+                  border: Border.all(color: context.scheme.primary.withOpacity(0.25)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.info_outline,
-                      color: Colors.blue[600],
+                      color: context.scheme.primary,
                       size: isTablet ? 20 : 18,
                     ),
                     SizedBox(width: isTablet ? 12 : 8),
@@ -1219,7 +1220,7 @@ class _ResponsiveEmptyState extends StatelessWidget {
                         'Create classes from the Classes tab',
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 14 : 12,
-                          color: Colors.blue[700],
+                          color: context.scheme.primary,
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,

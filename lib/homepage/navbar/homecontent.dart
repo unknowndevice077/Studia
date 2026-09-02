@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:app/providers/profile_picture_provider.dart';
 import 'package:app/login/Auth.dart';
+import 'package:app/theme/app_theme.dart';
 
 class Homecontent extends StatefulWidget {
   final String? greeting; // ✅ Add this line
@@ -357,7 +358,7 @@ class _HomecontentState extends State<Homecontent> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.black,
+                        color: context.scheme.onSurface,
                         width: 2, // Adjust border width as needed
                       ),
                     ),
@@ -381,14 +382,14 @@ class _HomecontentState extends State<Homecontent> {
                       style: GoogleFonts.dmSerifText(
                         fontSize: titleFontSize * 0.6,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: context.scheme.onSurface,
                       ),
                     ),
                     // Username below greeting (bold, smaller) - Trimmed email if no custom username
                     Text(
                       _getTrimmedUsername(),
-                      style: const TextStyle(
-                        color: Colors.black54,
+                      style: TextStyle(
+                        color: context.scheme.onSurfaceVariant,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -399,9 +400,9 @@ class _HomecontentState extends State<Homecontent> {
                 Builder(
                   builder:
                       (context) => IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.menu,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           size: 28,
                         ),
                         tooltip: 'Open Menu',
@@ -469,7 +470,7 @@ class _HomecontentState extends State<Homecontent> {
                   child: Text(
                     "Today's Classes",
                     style: GoogleFonts.dmSerifText(
-                      color: Colors.black,
+                      color: context.scheme.onSurface,
                       fontSize: 28,
                     ),
                   ),
@@ -517,7 +518,7 @@ class _HomecontentState extends State<Homecontent> {
                                     color:
                                         isSelected
                                             ? Colors.white
-                                            : Colors.black,
+                                            : context.scheme.onSurface,
                                   ),
                                 ),
                                 Text(
@@ -529,7 +530,7 @@ class _HomecontentState extends State<Homecontent> {
                                             ? Colors.white
                                             : (isToday
                                                 ? Colors.blueAccent
-                                                : Colors.grey),
+                                                : context.scheme.onSurfaceVariant),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -563,17 +564,9 @@ class _HomecontentState extends State<Homecontent> {
                 print('Documents count: ${snapshot.data!.docs.length}');
               }
 
-              // ✅ FIXED: Only show loading if there's no data yet
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(50),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-
-              // ✅ Handle error state
+              // Check error before "no data yet" - a stream error also has
+              // hasData == false, so checking loading first swallowed every
+              // error into a permanent spinner.
               if (snapshot.hasError) {
                 return Center(
                   child: Padding(
@@ -582,9 +575,18 @@ class _HomecontentState extends State<Homecontent> {
                       'Error loading classes: ${snapshot.error}',
                       style: GoogleFonts.dmSerifText(
                         fontSize: 18,
-                        color: Colors.red,
+                        color: context.colors.danger,
                       ),
                     ),
+                  ),
+                );
+              }
+
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(50),
+                    child: CircularProgressIndicator(),
                   ),
                 );
               }
@@ -599,7 +601,7 @@ class _HomecontentState extends State<Homecontent> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSerifText(
                         fontSize: 20,
-                        color: Colors.grey,
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -668,7 +670,7 @@ class _HomecontentState extends State<Homecontent> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSerifText(
                         fontSize: 20,
-                        color: Colors.grey,
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -817,14 +819,14 @@ class _HomecontentState extends State<Homecontent> {
                                               style: TextStyle(
                                                 fontSize: isCurrent ? 22 : 16,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.black,
+                                                color: context.scheme.onSurface,
                                               ),
                                             ),
                                             const Spacer(),
                                             Text(
                                               "Class",
                                               style: TextStyle(
-                                                color: Colors.black,
+                                                color: context.scheme.onSurface,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 13,
                                               ),
@@ -838,7 +840,7 @@ class _HomecontentState extends State<Homecontent> {
                                               : 'No time set',
                                           style: TextStyle(
                                             fontSize: isCurrent ? 16 : 13,
-                                            color: Colors.black,
+                                            color: context.scheme.onSurface,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -847,7 +849,7 @@ class _HomecontentState extends State<Homecontent> {
                                           classModel.teacher,
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: Colors.black,
+                                            color: context.scheme.onSurface,
                                           ),
                                         ),
                                       ],
@@ -927,7 +929,7 @@ class _HomecontentState extends State<Homecontent> {
                                             )
                                             : event['type'] == 'exam'
                                             ? Colors.redAccent.withOpacity(0.15)
-                                            : Colors.grey[200]!;
+                                            : context.scheme.surfaceContainerHigh;
 
                                     return Container(
                                       margin: const EdgeInsets.only(
@@ -966,25 +968,25 @@ class _HomecontentState extends State<Homecontent> {
                                         ),
                                         title: Text(
                                           label,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
-                                            color: Colors.black,
+                                            color: context.scheme.onSurface,
                                           ),
                                         ),
                                         subtitle: Text(
                                           event['date'] != null
                                               ? "${event['date'].day}/${event['date'].month}/${event['date'].year}"
                                               : '',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.black87,
+                                            color: context.scheme.onSurfaceVariant,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        trailing: const Icon(
+                                        trailing: Icon(
                                           Icons.arrow_right_alt,
-                                          color: Colors.grey,
+                                          color: context.scheme.onSurfaceVariant,
                                         ),
                                       ),
                                     );
@@ -1210,11 +1212,25 @@ class _StatsCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.22),
+            context.scheme.surfaceContainer,
+          ],
+        ),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: color.withOpacity(0.28), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: color.withOpacity(0.28),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+            spreadRadius: -8,
+          ),
+          BoxShadow(
+            color: context.colors.shadow,
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -1228,9 +1244,9 @@ class _StatsCard extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black87,
+                  color: context.scheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -1247,7 +1263,7 @@ class _StatsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1255,7 +1271,7 @@ class _StatsCard extends StatelessWidget {
                         'h ',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1264,7 +1280,7 @@ class _StatsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1272,7 +1288,7 @@ class _StatsCard extends StatelessWidget {
                         'm',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1289,7 +1305,7 @@ class _StatsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1297,7 +1313,7 @@ class _StatsCard extends StatelessWidget {
                         'm ',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1306,7 +1322,7 @@ class _StatsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1314,7 +1330,7 @@ class _StatsCard extends StatelessWidget {
                         's',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1331,7 +1347,7 @@ class _StatsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: context.scheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1339,7 +1355,7 @@ class _StatsCard extends StatelessWidget {
                         's',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1352,7 +1368,7 @@ class _StatsCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: context.scheme.onSurface,
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -1368,7 +1384,7 @@ class _StatsCard extends StatelessWidget {
                     : "Total Items",
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey[500],
+                  color: context.scheme.onSurfaceVariant,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -1378,10 +1394,21 @@ class _StatsCard extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [color, Color.lerp(color, Colors.black, 0.25)!],
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.5),
+                  blurRadius: 14,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: Colors.white, size: 26),
           ),
         ],
       ),
@@ -1408,11 +1435,25 @@ class _CountCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.22),
+            context.scheme.surfaceContainer,
+          ],
+        ),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: color.withOpacity(0.28), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: color.withOpacity(0.28),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+            spreadRadius: -8,
+          ),
+          BoxShadow(
+            color: context.colors.shadow,
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -1426,9 +1467,9 @@ class _CountCard extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black87,
+                  color: context.scheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -1438,7 +1479,7 @@ class _CountCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: context.scheme.onSurface,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -1447,7 +1488,7 @@ class _CountCard extends StatelessWidget {
                 "Total items",
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey[500],
+                  color: context.scheme.onSurfaceVariant,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -1457,10 +1498,21 @@ class _CountCard extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [color, Color.lerp(color, Colors.black, 0.25)!],
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.5),
+                  blurRadius: 14,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: Colors.white, size: 26),
           ),
         ],
       ),
@@ -1481,7 +1533,7 @@ class _EventCard extends StatelessWidget {
           (event['type'] as String).substring(1).toLowerCase();
     }
 
-    Color cardColor = Colors.grey[200]!;
+    Color cardColor = context.scheme.surfaceContainerHigh;
     if (label == 'Exam') {
       cardColor = Colors.redAccent.withOpacity(0.15);
     } else if (label == 'Deadline') {
@@ -1519,9 +1571,9 @@ class _EventCard extends StatelessWidget {
                   final classTime = snapshot.data ?? 'Time not available';
                   return Text(
                     classTime,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.black,
+                      color: context.scheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                   );
@@ -1532,9 +1584,9 @@ class _EventCard extends StatelessWidget {
                 event['date'] != null
                     ? "${event['date'].day}/${event['date'].month}/${event['date'].year}"
                     : '',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black,
+                  color: context.scheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),

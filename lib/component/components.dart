@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/theme/app_theme.dart';
 
 class Components extends StatelessWidget {
   final String hintText;
@@ -22,15 +23,15 @@ class Components extends StatelessWidget {
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(color: Color.fromARGB(255, 133, 130, 130)),
+          hintStyle: TextStyle(color: context.scheme.onSurfaceVariant),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.black, width: 2),
+            borderSide: BorderSide(color: context.scheme.outlineVariant, width: 2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color.fromARGB(255, 128, 126, 126),
+            borderSide: BorderSide(
+              color: context.scheme.primary,
               width: 2,
             ),
           ),

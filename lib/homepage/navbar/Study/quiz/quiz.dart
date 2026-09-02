@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/homepage/navbar/Study/quiz/quiz_taking_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/theme/app_theme.dart';
 
 class StudyQuizScreen extends StatefulWidget {
   const StudyQuizScreen({super.key});
@@ -61,7 +62,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                     'id': doc.id,
                     'title': doc.data()['title'] ?? 'Unknown Subject',
                     'color':
-                        doc.data()['color'] ?? const Color(0xFF3B82F6).value,
+                        doc.data()['color'] ?? context.scheme.primary.value,
                     'teacher': doc.data()['teacher'] ?? '',
                     'location': doc.data()['location'] ?? '',
                   },
@@ -148,7 +149,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: context.scheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -158,10 +159,10 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
               expandedHeight: isTablet ? 160 : 140,
               floating: false,
               pinned: true,
-              backgroundColor: Colors.white,
+              backgroundColor: context.scheme.surface,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                icon: Icon(Icons.arrow_back, color: context.scheme.onSurface),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               flexibleSpace: FlexibleSpaceBar(
@@ -171,15 +172,15 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                   style: GoogleFonts.inter(
                     fontSize: isTablet ? 28 : 24,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: context.scheme.onSurface,
                   ),
                 ),
                 background: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.white, Color(0xFFF8FAFC)],
+                      colors: [context.scheme.surface, context.scheme.surfaceContainerLow],
                     ),
                   ),
                   child: Stack(
@@ -191,7 +192,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                           width: isTablet ? 120 : 100,
                           height: isTablet ? 120 : 100,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF3B82F6).withOpacity(0.05),
+                            color: context.scheme.primary.withOpacity(0.05),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -218,7 +219,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 28.0 : 24.0,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: context.scheme.onSurface,
                             ),
                           ),
                           SizedBox(height: isTablet ? 6.0 : 4.0),
@@ -226,7 +227,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                             'Choose a subject to start your quiz',
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 16.0 : 14.0,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -258,9 +259,9 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                   if (_loading)
                     SizedBox(
                       height: 400,
-                      child: const Center(
+                      child: Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF3B82F6),
+                          color: context.scheme.primary,
                         ),
                       ),
                     )
@@ -283,10 +284,10 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
               ? Container(
                 padding: EdgeInsets.all(isTablet ? 24 : 16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.scheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: context.colors.shadow,
                       blurRadius: 10,
                       offset: const Offset(0, -2),
                     ),
@@ -368,7 +369,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
                             backgroundColor:
                                 _selectedSubjectId != null
                                     ? selectedSubjectColor
-                                    : Colors.grey,
+                                    : context.scheme.surfaceContainerHighest,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
@@ -413,22 +414,22 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
     return Container(
       padding: EdgeInsets.all(isTablet ? 48 : 40),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: context.scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: context.scheme.outlineVariant),
       ),
       child: Column(
         children: [
           Container(
             padding: EdgeInsets.all(isTablet ? 24 : 20),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: context.scheme.surfaceContainer,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.quiz_outlined,
               size: isTablet ? 56 : 48,
-              color: const Color(0xFF64748B),
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: isTablet ? 20 : 16),
@@ -437,7 +438,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
             style: GoogleFonts.inter(
               fontSize: isTablet ? 22 : 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1E293B),
+              color: context.scheme.onSurface,
             ),
           ),
           SizedBox(height: isTablet ? 12 : 8),
@@ -445,7 +446,7 @@ class _StudyQuizScreenState extends State<StudyQuizScreen>
             'Create some classes first to take quizzes',
             style: GoogleFonts.inter(
               fontSize: isTablet ? 16 : 14,
-              color: const Color(0xFF64748B),
+              color: context.scheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -538,13 +539,13 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
     final isLight = _isLightColor(subjectColor);
     
     if (!isSelected) {
-      return const Color(0xFFE2E8F0); // Default gray border
+      return context.scheme.outlineVariant; // Default gray border
     }
     
     if (isLight) {
       // For light colors, use a darker version or fallback to dark blue
       return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
-          ? const Color(0xFF3B82F6) // Blue for pure white
+          ? context.scheme.primary // Blue for pure white
           : HSLColor.fromColor(subjectColor).withLightness(0.3).toColor(); // Darker version
     } else {
       return subjectColor; // Use original color for dark colors
@@ -557,7 +558,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
     
     if (isLight) {
       return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
-          ? const Color(0xFF3B82F6) // Blue for pure white
+          ? context.scheme.primary // Blue for pure white
           : HSLColor.fromColor(subjectColor).withLightness(0.4).toColor(); // Darker version
     } else {
       return subjectColor;
@@ -590,8 +591,8 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
       }
     } else {
       // When not selected, use default colors
-      titleColor = const Color(0xFF1E293B);
-      teacherColor = const Color(0xFF64748B);
+      titleColor = context.scheme.onSurface;
+      teacherColor = context.scheme.onSurfaceVariant;
     }
 
     return GestureDetector(
@@ -606,8 +607,8 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
         child: Container(
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? (isLightSubjectColor ? Colors.white : subjectColor.withOpacity(0.05))
-                : Colors.white,
+                ? (isLightSubjectColor ? context.scheme.surfaceContainer : subjectColor.withOpacity(0.05))
+                : context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
             border: Border.all(
               color: borderColor, // Use contrasting border color
@@ -617,7 +618,7 @@ class _ResponsiveSubjectCardState extends State<_ResponsiveSubjectCard>
               BoxShadow(
                 color: widget.isSelected
                     ? borderColor.withOpacity(0.3) // Use border color for shadow
-                    : Colors.black.withOpacity(0.05),
+                    : context.colors.shadow,
                 blurRadius: widget.isSelected ? 15 : 8,
                 offset: const Offset(0, 4),
               ),
@@ -903,7 +904,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
     final subjectColor = Color(widget.subject['color']);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: context.scheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -912,10 +913,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
               expandedHeight: isTablet ? 160 : 140,
               floating: false,
               pinned: true,
-              backgroundColor: Colors.white,
+              backgroundColor: context.scheme.surface,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                icon: Icon(Icons.arrow_back, color: context.scheme.onSurface),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               flexibleSpace: FlexibleSpaceBar(
@@ -928,7 +929,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 24 : 20,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                        color: context.scheme.onSurface,
                       ),
                     ),
                     Text(
@@ -942,11 +943,11 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                   ],
                 ),
                 background: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.white, Color(0xFFF8FAFC)],
+                      colors: [context.scheme.surface, context.scheme.surfaceContainerLow],
                     ),
                   ),
                 ),
@@ -955,8 +956,8 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
 
             if (_loading)
               SliverFillRemaining(
-                child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF3B82F6)),
+                child: Center(
+                  child: CircularProgressIndicator(color: context.scheme.primary),
                 ),
               )
             else if (_topics.isEmpty)
@@ -978,7 +979,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                               style: GoogleFonts.inter(
                                 fontSize: isTablet ? 28.0 : 24.0,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87,
+                                color: context.scheme.onSurface,
                               ),
                             ),
                             SizedBox(height: isTablet ? 6.0 : 4.0),
@@ -1001,12 +1002,12 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                     Container(
                       padding: EdgeInsets.all(isTablet ? 24 : 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.scheme.surfaceContainer,
                         borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        border: Border.all(color: context.scheme.outlineVariant),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: context.colors.shadow,
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -1039,7 +1040,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                                       style: GoogleFonts.inter(
                                         fontSize: isTablet ? 18 : 16,
                                         fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF1E293B),
+                                        color: context.scheme.onSurface,
                                       ),
                                     ),
                                     SizedBox(height: isTablet ? 4 : 2),
@@ -1047,7 +1048,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                                       'How many questions would you like?',
                                       style: GoogleFonts.inter(
                                         fontSize: isTablet ? 14 : 12,
-                                        color: const Color(0xFF64748B),
+                                        color: context.scheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -1079,13 +1080,13 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                                         color:
                                             isSelected
                                                 ? subjectColor
-                                                : Colors.grey[100],
+                                                : context.scheme.surfaceContainerHigh,
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color:
                                               isSelected
                                                   ? subjectColor
-                                                  : Colors.grey[300]!,
+                                                  : context.scheme.outlineVariant,
                                           width: isSelected ? 2 : 1,
                                         ),
                                         boxShadow:
@@ -1108,7 +1109,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                                           color:
                                               isSelected
                                                   ? Colors.white
-                                                  : Colors.black87,
+                                                  : context.scheme.onSurface,
                                         ),
                                       ),
                                     ),
@@ -1158,7 +1159,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 22 : 18,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1E293B),
+                        color: context.scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: isTablet ? 4 : 2),
@@ -1166,7 +1167,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                       'Select the topics you want to be quizzed on',
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 14 : 12,
-                        color: const Color(0xFF64748B),
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
 
@@ -1201,10 +1202,10 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
               ? Container(
                 padding: EdgeInsets.all(isTablet ? 24 : 16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.scheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: context.colors.shadow,
                       blurRadius: 10,
                       offset: const Offset(0, -2),
                     ),
@@ -1268,7 +1269,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
                             backgroundColor:
                                 _selectedTopics.isNotEmpty
                                     ? subjectColor
-                                    : Colors.grey,
+                                    : context.scheme.surfaceContainerHighest,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
@@ -1312,23 +1313,23 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
       margin: EdgeInsets.all(isTablet ? 32 : 24),
       padding: EdgeInsets.all(isTablet ? 48 : 40),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: context.scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: context.scheme.outlineVariant),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: EdgeInsets.all(isTablet ? 24 : 20),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: context.scheme.surfaceContainer,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.topic_outlined,
               size: isTablet ? 56 : 48,
-              color: const Color(0xFF64748B),
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: isTablet ? 20 : 16),
@@ -1337,7 +1338,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
             style: GoogleFonts.inter(
               fontSize: isTablet ? 22 : 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1E293B),
+              color: context.scheme.onSurface,
             ),
           ),
           SizedBox(height: isTablet ? 12 : 8),
@@ -1345,7 +1346,7 @@ class _TopicSelectionScreenState extends State<TopicSelectionScreen>
             'Add some topics to this subject first',
             style: GoogleFonts.inter(
               fontSize: isTablet ? 16 : 14,
-              color: const Color(0xFF64748B),
+              color: context.scheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1409,7 +1410,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
     
     if (isLight) {
       return subjectColor == Colors.white || subjectColor.value == 0xFFFFFFFF
-          ? const Color(0xFF3B82F6)
+          ? context.scheme.primary
           : HSLColor.fromColor(subjectColor).withLightness(0.4).toColor();
     } else {
       return subjectColor;
@@ -1431,7 +1432,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
         titleColor = widget.subjectColor;
       }
     } else {
-      titleColor = const Color(0xFF1E293B);
+      titleColor = context.scheme.onSurface;
     }
 
     return GestureDetector(
@@ -1447,18 +1448,18 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
           padding: EdgeInsets.all(isTablet ? 24 : 20),
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? (isLightSubjectColor ? Colors.white : widget.subjectColor.withOpacity(0.05))
-                : Colors.white,
+                ? (isLightSubjectColor ? context.scheme.surfaceContainer : widget.subjectColor.withOpacity(0.05))
+                : context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
             border: Border.all(
-              color: widget.isSelected ? contrastingColor : const Color(0xFFE2E8F0),
+              color: widget.isSelected ? contrastingColor : context.scheme.outlineVariant,
               width: widget.isSelected ? 3 : 1, // Thicker border when selected
             ),
             boxShadow: [
               BoxShadow(
                 color: widget.isSelected
                     ? contrastingColor.withOpacity(0.3)
-                    : Colors.black.withOpacity(0.05),
+                    : context.colors.shadow,
                 blurRadius: widget.isSelected ? 12 : 8,
                 offset: const Offset(0, 4),
               ),
@@ -1512,7 +1513,7 @@ class _ResponsiveTopicCardState extends State<_ResponsiveTopicCard>
                         widget.topic['description'],
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 14 : 12,
-                          color: const Color(0xFF64748B),
+                          color: context.scheme.onSurfaceVariant,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

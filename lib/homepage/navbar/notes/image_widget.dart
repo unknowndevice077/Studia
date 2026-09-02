@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'image_handler.dart';
+import 'package:app/theme/app_theme.dart';
 
 class ImageWidget extends StatelessWidget {
   final String imageId;
@@ -25,7 +26,7 @@ class ImageWidget extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: context.scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(8),
       ),
       child: ClipRRect(
@@ -35,7 +36,7 @@ class ImageWidget extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(
-                color: Colors.grey.shade100,
+                color: context.scheme.surfaceContainerHigh,
                 child: Center(
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
@@ -44,21 +45,21 @@ class ImageWidget extends StatelessWidget {
 
             if (snapshot.hasError || !snapshot.hasData) {
               return Container(
-                color: Colors.grey.shade100,
+                color: context.scheme.surfaceContainerHigh,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.broken_image,
                       size: 32,
-                      color: Colors.grey.shade400,
+                      color: context.scheme.onSurfaceVariant,
                     ),
                     SizedBox(height: 4),
                     Text(
                       'Failed to load',
                       style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: Colors.grey.shade500,
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -79,7 +80,7 @@ class ImageWidget extends StatelessWidget {
                     fit: fit ?? BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.grey.shade100,
+                        color: context.scheme.surfaceContainerHigh,
                         child: Icon(
                           Icons.error,
                           size: 32,

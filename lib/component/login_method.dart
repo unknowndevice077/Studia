@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/theme/app_theme.dart';
 
 
 class Methods extends StatelessWidget {
@@ -14,7 +15,7 @@ class Methods extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: const Color.fromARGB(255, 197, 194, 194),
+        color: context.scheme.surfaceContainerHigh,
       ),
       child: Image.asset(
         imagePath,

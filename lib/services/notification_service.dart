@@ -147,7 +147,7 @@ class NotificationService {
   
   // ✅ Create notification channels
   static Future<void> _createNotificationChannels() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final android = _notifications.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
       
@@ -173,7 +173,7 @@ class NotificationService {
   
   // ✅ Request permissions
   static Future<void> _requestPermissions() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final android = _notifications.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
       
@@ -185,7 +185,7 @@ class NotificationService {
   
   // ✅ Check notification permission
   static Future<bool> hasNotificationPermission() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final status = await Permission.notification.status;
       return status == PermissionStatus.granted;
     }

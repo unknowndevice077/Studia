@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:app/providers/profile_picture_provider.dart';
 import 'package:app/login/auth.dart'; // Adjust the path according to your project structure
+import 'package:app/providers/theme_provider.dart';
+import 'package:app/theme/app_theme.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -172,7 +174,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Profile saved successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: context.colors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -187,7 +189,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving profile: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -208,11 +210,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.scheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(24), // Slightly larger corners
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: context.colors.shadow,
                     blurRadius: 18,
                     offset: const Offset(0, 6),
                   ),
@@ -225,7 +227,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withOpacity(0.05),
+                      color: context.scheme.primary.withOpacity(0.08),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -235,7 +237,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       children: [
                         Icon(
                           Icons.face,
-                          color: const Color(0xFF3B82F6),
+                          color: context.scheme.primary,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
@@ -245,7 +247,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF1E293B),
+                              color: context.scheme.onSurface,
                             ),
                           ),
                         ),
@@ -258,13 +260,13 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: context.scheme.surfaceContainerHigh,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Icon(
                               Icons.close,
                               size: 16,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -331,19 +333,19 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: isSelected ? const Color(0xFF3B82F6) : Colors.grey[300]!,
+            color: isSelected ? context.scheme.primary : context.scheme.outlineVariant,
             width: isSelected ? 3 : 2,
           ),
           boxShadow: [
             if (isSelected) ...[
               BoxShadow(
-                color: const Color(0xFF3B82F6).withOpacity(0.3),
+                color: context.scheme.primary.withOpacity(0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
             ] else ...[
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: context.colors.shadow,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -353,11 +355,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? context.scheme.primary.withOpacity(0.1) : Colors.transparent,
         ),
         child: CircleAvatar(
           radius: 28, // ✅ Good size for 4-column grid
-          backgroundColor: Colors.grey[200],
+          backgroundColor: context.scheme.surfaceContainerHigh,
           backgroundImage: AssetImage(_avatarOptions[index]['path']),
           onBackgroundImageError: (error, stackTrace) {
             if (kDebugMode) print('Avatar image error: $error');
@@ -366,11 +368,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             ? Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF3B82F6).withOpacity(0.2),
+                  color: context.scheme.primary.withOpacity(0.2),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
-                  color: Color(0xFF3B82F6),
+                  color: context.scheme.primary,
                   size: 20,
                 ),
               )
@@ -378,6 +380,112 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
         ),
       ),
     ));
+  }
+
+  // ✅ Appearance card with light/dark/system theme selector
+  Widget _buildAppearanceCard() {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: context.scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: context.colors.shadow,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: context.scheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    themeProvider.isDark ? Icons.dark_mode : Icons.light_mode,
+                    color: context.scheme.primary,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  'Appearance',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: context.scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _buildThemeOption(themeProvider, ThemeMode.light, Icons.light_mode, 'Light'),
+                const SizedBox(width: 10),
+                _buildThemeOption(themeProvider, ThemeMode.dark, Icons.dark_mode, 'Dark'),
+                const SizedBox(width: 10),
+                _buildThemeOption(themeProvider, ThemeMode.system, Icons.settings_suggest, 'System'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(
+    ThemeProvider themeProvider,
+    ThemeMode mode,
+    IconData icon,
+    String label,
+  ) {
+    final isSelected = themeProvider.mode == mode;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => themeProvider.setMode(mode),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? context.scheme.primary
+                : context.scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? context.scheme.primary : context.scheme.outlineVariant,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: isSelected ? context.scheme.onPrimary : context.scheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? context.scheme.onPrimary : context.scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildInfoCard({
@@ -390,11 +498,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.scheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: context.colors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -407,12 +515,12 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.1),
+                color: context.scheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF3B82F6),
+                color: context.scheme.primary,
                 size: 24,
               ),
             ),
@@ -426,7 +534,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[600],
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -437,13 +545,13 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: enabled ? Colors.black : Colors.grey[600],
+                      color: enabled ? context.scheme.onSurface : context.scheme.onSurfaceVariant,
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter $label',
                       hintStyle: GoogleFonts.inter(
-                        color: Colors.grey[400],
+                        color: context.scheme.onSurfaceVariant,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -475,7 +583,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             'Profile picture updated!',
             style: GoogleFonts.inter(fontWeight: FontWeight.w600),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -484,7 +592,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to update profile picture'),
-          backgroundColor: Colors.red,
+          backgroundColor: context.colors.danger,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -506,7 +614,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             children: [
               Icon(
                 Icons.logout,
-                color: Colors.red[600],
+                color: context.colors.danger,
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -515,7 +623,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                 style: GoogleFonts.inter(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: context.scheme.onSurface,
                 ),
               ),
             ],
@@ -524,7 +632,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
             'Are you sure you want to sign out of your account?',
             style: GoogleFonts.inter(
               fontSize: 16,
-              color: Colors.grey[700],
+              color: context.scheme.onSurfaceVariant,
               height: 1.4,
             ),
           ),
@@ -539,14 +647,14 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
+                  color: context.scheme.onSurfaceVariant,
                 ),
               ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[600],
+                backgroundColor: context.colors.danger,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -620,7 +728,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                 ),
               ],
             ),
-            backgroundColor: Colors.red[600],
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -642,7 +750,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
     final isTablet = screenSize.width > 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: context.scheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: SingleChildScrollView(
@@ -811,8 +919,8 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
               // ✅ White Content Section
               Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF8FAFC),
+                decoration: BoxDecoration(
+                  color: context.scheme.surface,
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(isTablet ? 32 : 24),
@@ -824,7 +932,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 24 : 20,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1E293B),
+                          color: context.scheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -861,20 +969,20 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.green[50],
+                          color: context.colors.success.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.green[200]!),
+                          border: Border.all(color: context.colors.success.withOpacity(0.4)),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.cloud_done_outlined, color: Colors.green[600], size: 20),
+                            Icon(Icons.cloud_done_outlined, color: context.colors.success, size: 20),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 'Your profile data is safely stored in the cloud and synced across devices',
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
-                                  color: Colors.green[800],
+                                  color: context.colors.success,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -882,6 +990,11 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                           ],
                         ),
                       ),
+
+                      const SizedBox(height: 24),
+
+                      // ✅ Appearance / Dark Mode
+                      _buildAppearanceCard(),
 
                       const SizedBox(height: 24),
 
@@ -899,8 +1012,8 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                   _loadUserData();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey[300],
-                                  foregroundColor: Colors.black,
+                                  backgroundColor: context.scheme.surfaceContainerHighest,
+                                  foregroundColor: context.scheme.onSurface,
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -921,7 +1034,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                               child: ElevatedButton(
                                 onPressed: _isLoading ? null : _saveProfile,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF3B82F6),
+                                  backgroundColor: context.scheme.primary,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
@@ -957,7 +1070,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       // Divider
                       Container(
                         height: 1,
-                        color: Colors.grey[200],
+                        color: context.scheme.outlineVariant,
                         margin: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       
@@ -965,12 +1078,12 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.scheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.red[200]!),
+                          border: Border.all(color: context.colors.danger.withOpacity(0.4)),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.red.withOpacity(0.05),
+                              color: context.colors.danger.withOpacity(0.08),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -988,12 +1101,12 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Colors.red[50],
+                                      color: context.colors.danger.withOpacity(0.12),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Icon(
                                       Icons.logout,
-                                      color: Colors.red[600],
+                                      color: context.colors.danger,
                                       size: 24,
                                     ),
                                   ),
@@ -1007,7 +1120,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                           style: GoogleFonts.inter(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.red[700],
+                                            color: context.colors.danger,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -1015,7 +1128,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                           'You will be signed out of your account',
                                           style: GoogleFonts.inter(
                                             fontSize: 14,
-                                            color: Colors.red[500],
+                                            color: context.colors.danger,
                                           ),
                                         ),
                                       ],
@@ -1023,7 +1136,7 @@ class _UserProfileState extends State<UserProfile> with TickerProviderStateMixin
                                   ),
                                   Icon(
                                     Icons.chevron_right,
-                                    color: Colors.red[400],
+                                    color: context.colors.danger,
                                     size: 20,
                                   ),
                                 ],

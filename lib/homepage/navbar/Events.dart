@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/theme/app_theme.dart';
 
 class Events extends StatefulWidget {
   const Events({super.key});
@@ -254,20 +255,19 @@ class _EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: context.scheme.surface,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: isDark ? Colors.black : Colors.white,
+        backgroundColor: context.scheme.surface,
         elevation: 0,
-        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+        iconTheme: IconThemeData(color: context.scheme.onSurface),
         title: Text(
           'Events',
           style: GoogleFonts.dmSerifText(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.scheme.onSurface,
           ),
         ),
         actions: [
@@ -382,7 +382,7 @@ class _EventsState extends State<Events> {
                     ? Center(
                         child: Text(
                           'No events for this day.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.scheme.onSurfaceVariant),
                         ),
                       )
                     : ListView.separated(
@@ -610,12 +610,12 @@ class _AddEventDialogState extends State<AddEventDialog> {
               // ✅ Date Selection ONLY (removed time picker)
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
+                  border: Border.all(color: context.scheme.outlineVariant),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  leading: const Icon(Icons.calendar_today, color: Colors.blue),
+                  leading: Icon(Icons.calendar_today, color: context.scheme.primary),
                   title: Text(
                     'Date: ${_formatDate(_selectedDate)}',
                     style: const TextStyle(fontSize: 16),
@@ -691,8 +691,8 @@ class _AddEventDialogState extends State<AddEventDialog> {
               : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: _selectedClassId != null && _eventType.isNotEmpty
-                ? Colors.blue
-                : Colors.grey,
+                ? context.scheme.primary
+                : context.scheme.surfaceContainerHighest,
           ),
           child: const Text('Save Event'),
         ),

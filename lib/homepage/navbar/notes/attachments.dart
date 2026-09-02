@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/theme/app_theme.dart';
 
 class AttachmentManager {
   // ✅ Pick and save any file as attachment
@@ -83,7 +84,7 @@ class AttachmentManager {
           child: Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.scheme.surfaceContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -486,7 +487,7 @@ class AttachmentsList extends StatelessWidget {
           key: ValueKey(attachment['id'] ?? index),
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.purple.shade200),
           ),
@@ -510,7 +511,7 @@ class AttachmentsList extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey.shade800,
+                color: context.scheme.onSurface,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -522,7 +523,7 @@ class AttachmentsList extends StatelessWidget {
                   attachment['type'] ?? 'Unknown Type',
                   style: GoogleFonts.inter(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: context.scheme.onSurfaceVariant,
                   ),
                 ),
                 if (attachment['size'] != null)
@@ -530,7 +531,7 @@ class AttachmentsList extends StatelessWidget {
                     AttachmentManager._formatFileSize(attachment['size']),
                     style: GoogleFonts.inter(
                       fontSize: 11,
-                      color: Colors.grey.shade500,
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
               ],

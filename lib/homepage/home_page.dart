@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:app/providers/profile_picture_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/theme/app_theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -190,11 +191,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       margin: const EdgeInsets.all(12), // Reduced from 16
       padding: const EdgeInsets.symmetric(vertical: 8), // Reduced from 12
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.scheme.surface,
         borderRadius: BorderRadius.circular(23), // Reduced from 25
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08), // Slightly lighter
+            color: context.colors.shadow,
             blurRadius: 15, // Reduced from 20
             offset: const Offset(0, 3), // Reduced from 5
           ),
@@ -228,8 +229,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _selectedIndex == index;
-    final primaryColor = Colors.blue;
-    final inactiveColor = Colors.grey[600]!;
+    final primaryColor = context.scheme.primary;
+    final inactiveColor = context.scheme.onSurfaceVariant;
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
@@ -270,14 +271,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         : (email.contains('@') ? email.split('@')[0] : email);
 
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       child: Column(
         children: [
           // Drawer Header
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
-            color: Colors.white,
+            color: context.scheme.surface,
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,12 +297,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: context.scheme.outlineVariant,
                           width: 2.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: context.colors.shadow,
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -321,8 +322,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   // Username or trimmed email
                   Text(
                     username,
-                    style: const TextStyle(
-                      color: Colors.black87,
+                    style: TextStyle(
+                      color: context.scheme.onSurface,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -330,8 +331,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   // Always show full email below
                   Text(
                     email,
-                    style: const TextStyle(
-                      color: Colors.black54,
+                    style: TextStyle(
+                      color: context.scheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                   ),
@@ -339,20 +340,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
           ),
-          
+
           // Drawer Items (only Profile remains)
           Expanded(
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.person,
-                    color: Colors.black87,
+                    color: context.scheme.onSurface,
                   ),
-                  title: const Text(
+                  title: Text(
                     'Profile',
                     style: TextStyle(
-                      color: Colors.black87,
+                      color: context.scheme.onSurface,
                     ),
                   ),
                   onTap: () {
@@ -397,7 +398,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       endDrawer: _buildDrawer(),
       body: SafeArea(
         child: Column(

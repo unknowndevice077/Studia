@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/services/notification_service.dart';
+import 'package:app/theme/app_theme.dart';
 
 class NotificationTestPage extends StatefulWidget {
   const NotificationTestPage({super.key});
@@ -49,19 +50,19 @@ class _NotificationTestPageState extends State<NotificationTestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: context.scheme.surface,
       appBar: AppBar(
         title: Text(
           'Background Notification Test',
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: context.scheme.onSurface,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: context.scheme.surface,
         elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: context.scheme.onSurface),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

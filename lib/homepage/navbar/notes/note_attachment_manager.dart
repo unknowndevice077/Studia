@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:app/theme/app_theme.dart';
 
 class NoteAttachmentManager {
   void showAttachmentOptions(
@@ -16,7 +17,7 @@ class NoteAttachmentManager {
       builder: (context) => Container(
         margin: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.scheme.surfaceContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -27,7 +28,7 @@ class NoteAttachmentManager {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: context.scheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:app/services/gemini_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'quiz_overview.dart';
@@ -153,10 +153,6 @@ class _QuizTakingScreenState extends State<QuizTakingScreen>
 
       // ✅ Fetch document contents for this topic
       final documentContents = await _getTopicDocuments(topicId);
-      
-      final model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-2.0-flash',
-      );
 
       // ✅ Build enhanced prompt with document content
       String documentsContext = '';
@@ -173,8 +169,7 @@ class _QuizTakingScreenState extends State<QuizTakingScreen>
         documentsContext += '\n--- End of Documents ---\n';
       }
 
-      final prompt = [
-        Content.text('''
+      final promptText = '''
 Generate exactly $questionsPerTopic multiple choice quiz questions about the topic: "$topicTitle".
 
 ${documentContents.isNotEmpty ? '''
@@ -215,16 +210,15 @@ Number of questions needed: $questionsPerTopic
 ${documentContents.isNotEmpty ? 'Questions should be based on the provided document content above.' : ''}
 
 Please ensure the JSON is valid and contains exactly $questionsPerTopic questions.
-'''),
-      ];
+''';
 
       print('🤖 Generating $questionsPerTopic questions for topic: $topicTitle');
       print('📚 Using ${documentContents.length} documents as context');
 
-      final response = await model.generateContent(prompt);
+      final responseText = await askGemini(promptText);
 
-      if (response.text != null) {
-        String jsonText = response.text!;
+      {
+        String jsonText = responseText;
         jsonText = jsonText.replaceAll('```json', '').replaceAll('```', '').trim();
         final startIndex = jsonText.indexOf('[');
         final endIndex = jsonText.lastIndexOf(']') + 1;
@@ -1073,6 +1067,52 @@ Please ensure the JSON is valid and contains exactly $questionsPerTopic question
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // ✅ Defensive guard: if question generation failed/came back empty
+    // (e.g. AI call errored) show a real error screen instead of crashing
+    // on _questions[0] with nothing in the list.
+    if (_questions.isEmpty) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Couldn't generate questions",
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Something went wrong while creating this quiz. Please go back and try again.',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Go Back'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/theme/app_theme.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -239,7 +240,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     final isVerySmallScreen = size.height < 600;
     
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: context.scheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
@@ -267,7 +268,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                               width: isVerySmallScreen ? 50 : 60,
                               height: isVerySmallScreen ? 50 : 60,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade900,
+                                color: context.scheme.primary,
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Icon(
@@ -283,7 +284,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                               style: TextStyle(
                                 fontSize: isVerySmallScreen ? 28 : 32,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.black87,
+                                color: context.scheme.onSurface,
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -293,7 +294,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: isVerySmallScreen ? 14 : 16,
-                                color: Colors.grey.shade600,
+                                color: context.scheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -318,14 +319,14 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                 bottom: isVerySmallScreen ? 16 : 24,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.red.shade50,
+                                color: context.colors.danger.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.red.shade100),
+                                border: Border.all(color: context.colors.danger.withOpacity(0.3)),
                               ),
                               child: Text(
                                 _errorMessage!,
                                 style: TextStyle(
-                                  color: Colors.red.shade700,
+                                  color: context.colors.danger,
                                   fontSize: isVerySmallScreen ? 13 : 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -351,7 +352,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                color: Colors.grey.shade500,
+                                color: context.scheme.onSurfaceVariant,
                                 size: 20,
                               ),
                               onPressed: () {
@@ -372,7 +373,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                     width: 8,
                                     height: 8,
                                     decoration: BoxDecoration(
-                                      color: _isPasswordStrong ? Colors.green.shade600 : Colors.red.shade600,
+                                      color: _isPasswordStrong ? context.colors.success : context.colors.danger,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -382,7 +383,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                       _isPasswordStrong ? 'Strong password' : 'Weak password',
                                       style: TextStyle(
                                         fontSize: isVerySmallScreen ? 11 : 12,
-                                        color: _isPasswordStrong ? Colors.green.shade600 : Colors.red.shade600,
+                                        color: _isPasswordStrong ? context.colors.success : context.colors.danger,
                                         fontWeight: FontWeight.w400,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -403,7 +404,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                color: Colors.grey.shade500,
+                                color: context.scheme.onSurfaceVariant,
                                 size: 20,
                               ),
                               onPressed: () {
@@ -424,7 +425,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                     width: 8,
                                     height: 8,
                                     decoration: BoxDecoration(
-                                      color: _passwordsMatch ? Colors.green.shade600 : Colors.red.shade600,
+                                      color: _passwordsMatch ? context.colors.success : context.colors.danger,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -434,7 +435,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                       _passwordsMatch ? 'Passwords match' : 'Passwords do not match',
                                       style: TextStyle(
                                         fontSize: isVerySmallScreen ? 11 : 12,
-                                        color: _passwordsMatch ? Colors.green.shade600 : Colors.red.shade600,
+                                        color: _passwordsMatch ? context.colors.success : context.colors.danger,
                                         fontWeight: FontWeight.w400,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -462,7 +463,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: isVerySmallScreen ? 11 : 12,
-                              color: Colors.grey.shade500,
+                              color: context.scheme.onSurfaceVariant,
                               height: 1.4,
                             ),
                           ),
@@ -486,7 +487,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                               Text(
                                 'Already have an account? ',
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                  color: context.scheme.onSurfaceVariant,
                                   fontSize: isVerySmallScreen ? 13 : 14,
                                 ),
                               ),
@@ -495,7 +496,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                 child: Text(
                                   'Sign in',
                                   style: TextStyle(
-                                    color: Colors.grey.shade900,
+                                    color: context.scheme.primary,
                                     fontSize: isVerySmallScreen ? 13 : 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -545,15 +546,15 @@ class _MinimalTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: context.scheme.outlineVariant),
           ),
           child: TextField(
             controller: controller,
@@ -594,7 +595,7 @@ class _MinimalButton extends StatelessWidget {
     return Container(
       height: isCompact ? 48 : 56,
       decoration: BoxDecoration(
-        color: onPressed != null ? Colors.grey.shade900 : Colors.grey.shade400,
+        color: onPressed != null ? context.scheme.primary : context.scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextButton(

@@ -2,6 +2,7 @@ import 'package:app/login/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:app/theme/app_theme.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -92,7 +93,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
     final size = MediaQuery.of(context).size;
     
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: context.scheme.surface,
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -116,7 +117,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                               width: 60,
                               height: 60,
                               decoration: BoxDecoration(
-                                color: _emailSent ? Colors.green.shade600 : Colors.grey.shade900,
+                                color: _emailSent ? context.colors.success : context.scheme.primary,
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Icon(
@@ -130,10 +131,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                             Text(
                               _emailSent ? 'Email Sent!' : 'Reset Password',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.black87,
+                                color: context.scheme.onSurface,
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -145,7 +146,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey.shade600,
+                                color: context.scheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -169,14 +170,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                 padding: const EdgeInsets.all(16),
                                 margin: const EdgeInsets.only(bottom: 24),
                                 decoration: BoxDecoration(
-                                  color: Colors.red.shade50,
+                                  color: context.colors.danger.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.red.shade100),
+                                  border: Border.all(color: context.colors.danger.withOpacity(0.3)),
                                 ),
                                 child: Text(
                                   _errorMessage!,
                                   style: TextStyle(
-                                    color: Colors.red.shade700,
+                                    color: context.colors.danger,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -218,15 +219,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                             Container(
                               padding: const EdgeInsets.all(16), // Reduced from 20
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
+                                color: context.scheme.surfaceContainerHigh,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade200),
+                                border: Border.all(color: context.scheme.outlineVariant),
                               ),
                               child: Column(
                                 children: [
                                   Icon(
                                     Icons.help_outline,
-                                    color: Colors.grey.shade600,
+                                    color: context.scheme.onSurfaceVariant,
                                     size: 24, // Reduced from 32
                                   ),
                                   const SizedBox(height: 12), // Reduced from 16
@@ -235,7 +236,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                     style: TextStyle(
                                       fontSize: 16, // Reduced from 18
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade800,
+                                      color: context.scheme.onSurface,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -244,7 +245,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                     'Contact support to recover your account',
                                     style: TextStyle(
                                       fontSize: 13, // Reduced from 14
-                                      color: Colors.grey.shade600,
+                                      color: context.scheme.onSurfaceVariant,
                                       height: 1.4,
                                     ),
                                     textAlign: TextAlign.center,
@@ -253,9 +254,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                   Container(
                                     height: 40, // Reduced from 44
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: context.scheme.surfaceContainer,
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.grey.shade300),
+                                      border: Border.all(color: context.scheme.outlineVariant),
                                     ),
                                     child: TextButton(
                                       onPressed: () {
@@ -271,7 +272,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                                 ),
                                               ],
                                             ),
-                                            backgroundColor: Colors.blue.shade600,
+                                            backgroundColor: context.scheme.primary,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(12)
@@ -303,7 +304,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                       child: Text(
                                         'Contact Support',
                                         style: TextStyle(
-                                          color: Colors.grey.shade700,
+                                          color: context.scheme.onSurfaceVariant,
                                           fontSize: 13, // Reduced from 14
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -319,15 +320,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                             Container(
                               padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: Colors.green.shade50,
+                                color: context.colors.success.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.green.shade200),
+                                border: Border.all(color: context.colors.success.withOpacity(0.4)),
                               ),
                               child: Column(
                                 children: [
                                   Icon(
                                     Icons.check_circle,
-                                    color: Colors.green.shade600,
+                                    color: context.colors.success,
                                     size: 48,
                                   ),
                                   const SizedBox(height: 16),
@@ -336,7 +337,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.green.shade800,
+                                      color: context.colors.success,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -345,7 +346,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                     'Please check your email and follow the instructions to reset your password.',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.green.shade700,
+                                      color: context.colors.success,
                                       height: 1.4,
                                     ),
                                     textAlign: TextAlign.center,
@@ -369,7 +370,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                 child: Text(
                                   'Try different email',
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: context.scheme.onSurfaceVariant,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -390,15 +391,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
+                            color: context.scheme.primary.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blue.shade100),
+                            border: Border.all(color: context.scheme.primary.withOpacity(0.25)),
                           ),
                           child: Row(
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Colors.blue.shade600,
+                                color: context.scheme.primary,
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -407,7 +408,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                                   'Make sure to check your spam folder if you don\'t see the email.',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.blue.shade700,
+                                    color: context.scheme.primary,
                                     height: 1.4,
                                   ),
                                 ),
@@ -425,9 +426,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                       child: Container(
                         height: 56,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.scheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
+                          border: Border.all(color: context.scheme.outlineVariant),
                         ),
                         child: TextButton(
                           onPressed: () {
@@ -446,14 +447,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                             children: [
                               Icon(
                                 Icons.arrow_back,
-                                color: Colors.grey.shade700,
+                                color: context.scheme.onSurfaceVariant,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 'Back to Sign In',
                                 style: TextStyle(
-                                  color: Colors.grey.shade700,
+                                  color: context.scheme.onSurfaceVariant,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -500,7 +501,7 @@ class _MinimalTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -517,23 +518,23 @@ class _MinimalTextField extends StatelessWidget {
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: context.scheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: context.scheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade900, width: 2),
+              borderSide: BorderSide(color: context.scheme.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red, width: 2),
+              borderSide: BorderSide(color: context.colors.danger, width: 2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red, width: 2),
+              borderSide: BorderSide(color: context.colors.danger, width: 2),
             ),
             contentPadding: const EdgeInsets.all(16),
           ),
@@ -559,7 +560,7 @@ class _MinimalButton extends StatelessWidget {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: onPressed != null ? Colors.grey.shade900 : Colors.grey.shade400,
+        color: onPressed != null ? context.scheme.primary : context.scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextButton(

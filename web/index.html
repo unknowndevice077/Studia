@@ -31,6 +31,102 @@
 
   <title>app</title>
   <link rel="manifest" href="manifest.json">
+
+  <!--
+    Studia: custom App Check token helper.
+
+    Firebase's JS App Check SDK calls reCAPTCHA Enterprise's execute() with
+    the raw site-key string, which Google's reCAPTCHA Enterprise API does
+    not support (it requires execute() to be called with a widget ID from a
+    prior render() call) — this makes every App Check token request fail
+    with "Invalid site key or not loaded in api.js" / a failed-attestation
+    401, regardless of how correctly everything else is configured. This
+    was confirmed by hand against the live reCAPTCHA Enterprise assessment
+    API: the render()+execute(widgetId) pattern below reliably produces a
+    valid, high-score token; execute(siteKey) never does.
+
+    Until that upstream bug is fixed, we do the token exchange ourselves
+    here and call Firebase's AI Logic proxy directly from
+    lib/services/gemini_service.dart, bypassing the broken parts of the
+    firebase_ai / firebase_app_check packages on web only (other platforms
+    use native App Check attestation and are unaffected).
+  -->
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=explicit" async defer></script>
+  <script>
+    (function () {
+      var SITE_KEY = '6LcLP6QtAAAAADL9A4N6VGfB6jUrq5CGChqBSyL7';
+      var PROJECT_NUMBER = '610586505769';
+      var APP_ID = '1:610586505769:web:2de902316c0647fd78e238';
+      var API_KEY = 'AIzaSyAnGPN6Lj5a0fN3cudS-phyzdL8YzyHmGM';
+
+      var widgetId = null;
+      var cachedToken = null;
+      var cachedExpiry = 0;
+
+      function waitForRecaptcha() {
+        return new Promise(function (resolve) {
+          (function poll() {
+            if (window.grecaptcha && window.grecaptcha.enterprise && window.grecaptcha.enterprise.render) {
+              resolve();
+            } else {
+              setTimeout(poll, 100);
+            }
+          })();
+        });
+      }
+
+      function ensureWidget() {
+        return waitForRecaptcha().then(function () {
+          if (widgetId === null) {
+            var container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.bottom = '0';
+            container.style.right = '0';
+            container.style.opacity = '0';
+            container.style.pointerEvents = 'none';
+            document.body.appendChild(container);
+            widgetId = window.grecaptcha.enterprise.render(container, {
+              sitekey: SITE_KEY,
+              size: 'invisible'
+            });
+          }
+          return widgetId;
+        });
+      }
+
+      function fetchFreshToken() {
+        return ensureWidget().then(function (id) {
+          return window.grecaptcha.enterprise.execute(id, {action: 'fire_app_check'});
+        }).then(function (recaptchaToken) {
+          var url = 'https://firebaseappcheck.googleapis.com/v1/projects/' + PROJECT_NUMBER +
+            '/apps/' + APP_ID + ':exchangeRecaptchaEnterpriseToken?key=' + API_KEY;
+          return fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({recaptcha_enterprise_token: recaptchaToken})
+          });
+        }).then(function (res) {
+          return res.json();
+        }).then(function (data) {
+          if (!data.token) {
+            throw new Error('App Check exchange failed: ' + JSON.stringify(data));
+          }
+          var ttlSeconds = parseInt(data.ttl, 10) || 3600;
+          cachedToken = data.token;
+          // Refresh 2 minutes early so a call never races an expiring token.
+          cachedExpiry = Date.now() + (ttlSeconds - 120) * 1000;
+          return cachedToken;
+        });
+      }
+
+      window.__studiaGetAppCheckToken = function () {
+        if (cachedToken && Date.now() < cachedExpiry) {
+          return Promise.resolve(cachedToken);
+        }
+        return fetchFreshToken();
+      };
+    })();
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

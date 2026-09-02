@@ -9,6 +9,7 @@ import 'note_subject_manager.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/theme/app_theme.dart';
 
 class NotesScreen extends StatefulWidget {
   final Function(bool)? onNoteEditingChanged;
@@ -33,9 +34,8 @@ class _NotesScreenState extends State<NotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: context.scheme.surface,
       body: _showingAddNote
           ? AddNoteScreen(onBack: _toggleAddNote)
           : NotesOverview(onAddNote: _toggleAddNote),
@@ -73,7 +73,7 @@ class _NotesOverviewState extends State<NotesOverview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       appBar: _uiComponents.buildNotesAppBar(
         context: context,
         editMode: _editMode,
@@ -86,7 +86,7 @@ class _NotesOverviewState extends State<NotesOverview> {
         },
       ),
       body: Container(
-        color: Colors.white,
+        color: context.scheme.surface,
         child: _uiComponents.buildNotesList(
           context: context,
           editMode: _editMode,

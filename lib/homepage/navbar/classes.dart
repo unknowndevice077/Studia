@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:flutter/services.dart'; // ✅ ADD: For Clipboard functionality
 // import 'package:app/debug/notification_service_debug_page.dart'; // ✅ ADD: If using debug page option
 import 'package:app/services/notification_test_page.dart'; // ✅ ADD: Import the test page
+import 'package:app/theme/app_theme.dart';
 
 class DayHelper {
   static const List<String> weekdayOrder = [
@@ -180,7 +181,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: context.colors.danger),
             child: Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -235,7 +236,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            backgroundColor: Colors.green.shade600,
+            backgroundColor: context.colors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -253,7 +254,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error deleting class: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
           ),
         );
       }
@@ -332,7 +333,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                   ),
                 ],
               ),
-              backgroundColor: Colors.green.shade600,
+              backgroundColor: context.colors.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -350,7 +351,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error saving class: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: context.colors.danger,
             ),
           );
         }
@@ -392,7 +393,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                                 ? 'Notifications enabled successfully'
                                 : 'Notifications disabled (disable not implemented)',
                           ),
-                          backgroundColor: value ? Colors.green : Colors.orange,
+                          backgroundColor: value ? context.colors.success : context.colors.warning,
                         ),
                       );
                     }
@@ -404,7 +405,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Error: ${e.toString()}'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: context.colors.danger,
                         ),
                       );
                     }
@@ -418,9 +419,9 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                     await NotificationService.testClassStartingNotification();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text('Test notification sent!'),
-                          backgroundColor: Colors.green,
+                          backgroundColor: context.colors.success,
                         ),
                       );
                     }
@@ -432,7 +433,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Test failed: ${e.toString()}'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: context.colors.danger,
                         ),
                       );
                     }
@@ -492,7 +493,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            backgroundColor: notify ? Colors.green.shade600 : Colors.orange.shade600,
+            backgroundColor: notify ? context.colors.success : context.colors.warning,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -509,7 +510,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error toggling notification: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
           ),
         );
       }
@@ -519,16 +520,16 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           'Classes',
-          style: GoogleFonts.dmSerifText(fontSize: 36, color: Colors.black),
+          style: GoogleFonts.dmSerifText(fontSize: 36, color: context.scheme.onSurface),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: context.scheme.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: context.scheme.onSurface),
         actions: [
           // ✅ FIXED: Navigate to notification_service.dart when bell icon is clicked
           FutureBuilder<bool>(
@@ -540,7 +541,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                   isEnabled
                       ? Icons.notifications_outlined
                       : Icons.notifications_off_outlined,
-                  color: isEnabled ? Colors.black : Colors.grey[600],
+                  color: isEnabled ? context.scheme.onSurface : context.scheme.onSurfaceVariant,
                 ),
                 tooltip: 'Notifications & Background Test',
                 onPressed: () {
@@ -556,7 +557,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.black),
+            icon: Icon(Icons.add, color: context.scheme.onSurface),
             tooltip: 'Add Class',
             onPressed: () => _addOrEditClass(),
           ),
@@ -572,6 +573,15 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error loading classes: ${snapshot.error}',
+                style: TextStyle(color: context.colors.danger),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(
               child: Column(
@@ -580,14 +590,14 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                   Icon(
                     Icons.school_outlined,
                     size: 80,
-                    color: Colors.grey[400],
+                    color: context.scheme.onSurfaceVariant,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'No classes yet. Add some!',
                     style: GoogleFonts.dmSerifText(
                       fontSize: 20,
-                      color: Colors.grey,
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -642,7 +652,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
         builder: (context) => AlertDialog(
           title: Row(
             children: [
-              Icon(Icons.code, color: Colors.blue.shade600),
+              Icon(Icons.code, color: context.scheme.primary),
               const SizedBox(width: 12),
               Text(
                 'Open File',
@@ -662,15 +672,15 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: context.scheme.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.scheme.outlineVariant),
                 ),
                 child: SelectableText(
                   'lib/services/notification_service.dart',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 14,
-                    color: Colors.blue.shade700,
+                    color: context.scheme.primary,
                   ),
                 ),
               ),
@@ -693,7 +703,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Close',
-                style: GoogleFonts.inter(color: Colors.grey.shade600),
+                style: GoogleFonts.inter(color: context.scheme.onSurfaceVariant),
               ),
             ),
             ElevatedButton.icon(
@@ -715,7 +725,7 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
-                    backgroundColor: Colors.green.shade600,
+                    backgroundColor: context.colors.success,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -724,8 +734,8 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-                foregroundColor: Colors.white,
+                backgroundColor: context.scheme.primary,
+                foregroundColor: context.scheme.onPrimary,
               ),
               icon: const Icon(Icons.copy, size: 16),
               label: Text(
@@ -748,9 +758,9 @@ class _ClassesState extends State<Classes> with WidgetsBindingObserver {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: context.scheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(color: context.scheme.outlineVariant),
             ),
             child: Text(
               shortcut,
@@ -837,6 +847,36 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
     return _textColor;
   }
 
+  // ✅ Subtle lightness shift for a two-tone gradient instead of a flat fill
+  Color _shade(Color color, double lightnessDelta) {
+    final hsl = HSLColor.fromColor(color);
+    final l = (hsl.lightness + lightnessDelta).clamp(0.0, 1.0);
+    return hsl.withLightness(l).toColor();
+  }
+
+  Widget _iconChip({
+    required IconData icon,
+    required VoidCallback? onPressed,
+    required String tooltip,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 6),
+      child: Material(
+        color: _textColor.withOpacity(0.14),
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: IconButton(
+          icon: Icon(icon, size: 19, color: _iconColor),
+          tooltip: tooltip,
+          onPressed: onPressed,
+          padding: const EdgeInsets.all(8),
+          constraints: const BoxConstraints(),
+          splashRadius: 20,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -846,11 +886,29 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
         padding: const EdgeInsets.all(20),
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: widget.classModel.color,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              _shade(widget.classModel.color, 0.05),
+              widget.classModel.color,
+              _shade(widget.classModel.color, -0.09),
+            ],
+          ),
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: _textColor.withOpacity(0.08),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(_isExpanded ? 0.18 : 0.10),
+              color: widget.classModel.color.withOpacity(0.4),
+              blurRadius: _isExpanded ? 26 : 16,
+              offset: const Offset(0, 10),
+              spreadRadius: -6,
+            ),
+            BoxShadow(
+              color: context.colors.shadow,
               blurRadius: _isExpanded ? 18 : 8,
               offset: const Offset(0, 6),
             ),
@@ -878,13 +936,10 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                 Row(
                   children: [
                     // Notification bell
-                    IconButton(
-                      icon: Icon(
-                        widget.classModel.notify
-                            ? Icons.notifications_active
-                            : Icons.notifications_off,
-                        color: _iconColor,
-                      ),
+                    _iconChip(
+                      icon: widget.classModel.notify
+                          ? Icons.notifications_active
+                          : Icons.notifications_off,
                       tooltip: widget.classModel.notify
                           ? 'Disable notifications for this class'
                           : 'Enable notifications for this class',
@@ -893,16 +948,14 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                       },
                     ),
                     if (widget.onEdit != null)
-                      IconButton(
-                        icon: const Icon(CupertinoIcons.pencil, size: 22),
-                        color: _iconColor,
+                      _iconChip(
+                        icon: CupertinoIcons.pencil,
                         tooltip: 'Edit',
                         onPressed: widget.onEdit,
                       ),
                     if (widget.onDelete != null)
-                      IconButton(
-                        icon: const Icon(CupertinoIcons.trash, size: 22),
-                        color: _iconColor,
+                      _iconChip(
+                        icon: CupertinoIcons.trash,
                         tooltip: 'Delete',
                         onPressed: widget.onDelete,
                       ),
@@ -1202,7 +1255,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
               ),
             ],
           ),
-          backgroundColor: Colors.red.shade600,
+          backgroundColor: context.colors.danger,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -1254,11 +1307,11 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.scheme.surface,
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: context.colors.shadow,
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -1279,13 +1332,13 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
+                          color: context.scheme.primaryContainer,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           widget.existing == null ? Icons.add_circle_outline : Icons.edit_outlined,
                           size: 32,
-                          color: Colors.blue.shade700,
+                          color: context.scheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -1295,7 +1348,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         style: GoogleFonts.dmSerifText(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
+                          color: context.scheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -1306,7 +1359,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 14,
-                          color: Colors.grey.shade600,
+                          color: context.scheme.onSurfaceVariant,
                           height: 1.4,
                         ),
                       ),
@@ -1326,6 +1379,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     icon: CupertinoIcons.book_solid,
                     errorText: _showTitleError ? 'Subject is required' : null,
                     iconColor: Colors.orange.shade600,
+                    onClearError: () => setState(() => _showTitleError = false),
                   ),
                 ),
                 
@@ -1337,13 +1391,13 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: context.scheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       // ✅ ADD: Red border if time errors
                       color: (_showStartTimeError || _showEndTimeError) 
-                          ? Colors.red.shade300 
-                          : Colors.grey.shade200,
+                          ? context.colors.danger 
+                          : context.scheme.outlineVariant,
                       width: (_showStartTimeError || _showEndTimeError) ? 2 : 1,
                     ),
                   ),
@@ -1355,8 +1409,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                           Icon(
                             CupertinoIcons.clock_solid, 
                             color: (_showStartTimeError || _showEndTimeError) 
-                                ? Colors.red.shade600 
-                                : Colors.blue.shade600, 
+                                ? context.colors.danger 
+                                : context.scheme.primary, 
                             size: 20
                           ),
                           const SizedBox(width: 8),
@@ -1366,8 +1420,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: (_showStartTimeError || _showEndTimeError) 
-                                  ? Colors.red.shade800 
-                                  : Colors.grey.shade800,
+                                  ? context.colors.danger 
+                                  : context.scheme.onSurface,
                             ),
                           ),
                           // ✅ ADD: Error indicator for time section
@@ -1375,7 +1429,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                             const SizedBox(width: 8),
                             Icon(
                               Icons.error_outline,
-                              color: Colors.red.shade600,
+                              color: context.colors.danger,
                               size: 18,
                             ),
                           ],
@@ -1389,8 +1443,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           color: (_showStartTimeError || _showEndTimeError) 
-                              ? Colors.red.shade600 
-                              : Colors.grey.shade600,
+                              ? context.colors.danger 
+                              : context.scheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -1413,16 +1467,16 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                           // Arrow/Divider
                           Row(
                             children: [
-                              Expanded(child: Divider(color: Colors.grey.shade300)),
+                              Expanded(child: Divider(color: context.scheme.outlineVariant)),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
                                 child: Icon(
                                   Icons.arrow_downward,
-                                  color: Colors.grey.shade400,
+                                  color: context.scheme.onSurfaceVariant,
                                   size: 20,
                                 ),
                               ),
-                              Expanded(child: Divider(color: Colors.grey.shade300)),
+                              Expanded(child: Divider(color: context.scheme.outlineVariant)),
                             ],
                           ),
                           
@@ -1455,6 +1509,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     icon: CupertinoIcons.location_solid,
                     errorText: _showRoomError ? 'Room is required' : null,
                     iconColor: Colors.green.shade600,
+                    onClearError: () => setState(() => _showRoomError = false),
                   ),
                 ),
                 
@@ -1470,6 +1525,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     icon: CupertinoIcons.person_solid,
                     errorText: _showTeacherError ? 'Teacher is required' : null,
                     iconColor: Colors.purple.shade600,
+                    onClearError: () => setState(() => _showTeacherError = false),
                   ),
                 ),
                 
@@ -1482,7 +1538,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   hint: 'Additional information about this class...',
                   icon: CupertinoIcons.doc_text,
                   maxLines: 3,
-                  iconColor: Colors.grey.shade600,
+                  iconColor: context.scheme.onSurfaceVariant,
                 ),
                 
                 const SizedBox(height: 24),
@@ -1492,23 +1548,23 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: context.scheme.primaryContainer,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(color: context.scheme.primary.withOpacity(0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(CupertinoIcons.calendar, color: Colors.blue.shade700, size: 20),
+                          Icon(CupertinoIcons.calendar, color: context.scheme.onPrimaryContainer, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Class Days',
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Colors.blue.shade800,
+                              color: context.scheme.onPrimaryContainer,
                             ),
                           ),
                         ],
@@ -1518,7 +1574,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         'Select the days when this class is held',
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: Colors.blue.shade600,
+                          color: context.scheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -1549,23 +1605,23 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: context.scheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: context.scheme.outlineVariant),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.palette, color: Colors.grey.shade700, size: 20),
+                          Icon(Icons.palette, color: context.scheme.onSurfaceVariant, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Class Color',
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade800,
+                              color: context.scheme.onSurface,
                             ),
                           ),
                         ],
@@ -1575,7 +1631,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         'Choose a color to identify this class',
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: Colors.grey.shade600,
+                          color: context.scheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -1602,8 +1658,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         ),
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(0, 48),
-                          foregroundColor: Colors.grey.shade600,
-                          side: BorderSide(color: Colors.grey.shade300),
+                          foregroundColor: context.scheme.onSurfaceVariant,
+                          side: BorderSide(color: context.scheme.outlineVariant),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -1624,8 +1680,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                         ),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(0, 48),
-                          backgroundColor: Colors.blue.shade600,
-                          foregroundColor: Colors.white,
+                          backgroundColor: context.scheme.primary,
+                          foregroundColor: context.scheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -1650,6 +1706,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
     String? errorText,
     int maxLines = 1,
     Color? iconColor,
+    VoidCallback? onClearError,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1659,7 +1716,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -1668,7 +1725,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: context.colors.shadow,
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -1677,56 +1734,61 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           child: TextField(
             controller: controller,
             maxLines: maxLines,
+            onChanged: (value) {
+              if (errorText != null && value.trim().isNotEmpty) {
+                onClearError?.call();
+              }
+            },
             style: GoogleFonts.inter(
               fontSize: 16,
-              color: Colors.grey.shade800,
+              color: context.scheme.onSurface,
             ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: GoogleFonts.inter(
                 fontSize: 14,
-                color: Colors.grey.shade500,
+                color: context.scheme.onSurfaceVariant,
               ),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (iconColor ?? Colors.blue).withOpacity(0.1),
+                  color: (iconColor ?? context.scheme.primary).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   icon,
                   size: 20,
-                  color: iconColor ?? Colors.blue.shade600,
+                  color: iconColor ?? context.scheme.primary,
                 ),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: context.scheme.outlineVariant),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: context.scheme.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.blue.shade500, width: 2),
+                borderSide: BorderSide(color: context.scheme.primary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+                borderSide: BorderSide(color: context.colors.danger, width: 2),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+                borderSide: BorderSide(color: context.colors.danger, width: 2),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: context.scheme.surfaceContainerHighest,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               errorText: errorText,
               errorStyle: GoogleFonts.inter(
                 fontSize: 12,
-                color: Colors.red.shade600,
+                color: context.colors.danger,
               ),
             ),
           ),
@@ -1752,7 +1814,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -1762,15 +1824,15 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.scheme.surfaceContainer,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: hasError ? Colors.red.shade400 : Colors.grey.shade300,
+                color: hasError ? context.colors.danger : context.scheme.outlineVariant,
                 width: hasError ? 2 : 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: context.colors.shadow,
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -1781,13 +1843,13 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: context.scheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
                     size: 20,
-                    color: Colors.blue.shade600,
+                    color: context.scheme.primary,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -1797,8 +1859,8 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     style: GoogleFonts.inter(
                       fontSize: _formatTimeOfDay(time).isEmpty ? 14 : 18,
                       color: _formatTimeOfDay(time).isEmpty 
-                          ? Colors.grey.shade500 
-                          : Colors.grey.shade800,
+                          ? context.scheme.onSurfaceVariant 
+                          : context.scheme.onSurface,
                       fontWeight: _formatTimeOfDay(time).isEmpty 
                           ? FontWeight.normal 
                           : FontWeight.w600,
@@ -1808,7 +1870,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                 Icon(
                   Icons.access_time,
                   size: 18,
-                  color: Colors.grey.shade400,
+                  color: context.scheme.onSurfaceVariant,
                 ),
               ],
             ),
@@ -1821,7 +1883,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
               'Required',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: Colors.red.shade600,
+                color: context.colors.danger,
               ),
             ),
           ),
@@ -1831,14 +1893,33 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
 
   // ✅ ADD: Missing scrollable time picker method
   void _showScrollableTimePicker({required bool isStart}) {
+    // Snapshot whatever was selected before opening, so Cancel can restore it.
+    final TimeOfDay? previousValue = isStart ? _startTime : _endTime;
+    final TimeOfDay defaultTime = TimeOfDay(
+      hour: previousValue?.hour ?? 8,
+      minute: _roundToNearestInterval(previousValue?.minute ?? 0, 10),
+    );
+    // The wheel picker shows this default the moment it opens — commit it
+    // immediately so tapping "Done" without scrolling still counts as
+    // choosing that time, instead of silently leaving the field unset.
+    setState(() {
+      if (isStart) {
+        _startTime = defaultTime;
+        _showStartTimeError = false;
+      } else {
+        _endTime = defaultTime;
+        _showEndTimeError = false;
+      }
+    });
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.4,
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.scheme.surface,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(28),
             topRight: Radius.circular(28),
@@ -1853,11 +1934,21 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      // Restore whatever was selected before this sheet opened.
+                      setState(() {
+                        if (isStart) {
+                          _startTime = previousValue;
+                        } else {
+                          _endTime = previousValue;
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       'Cancel',
                       style: GoogleFonts.inter(
-                        color: Colors.grey.shade600,
+                        color: context.scheme.onSurfaceVariant,
                         fontSize: 16,
                       ),
                     ),
@@ -1867,7 +1958,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     style: GoogleFonts.inter(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade800,
+                      color: context.scheme.onSurface,
                     ),
                   ),
                   TextButton(
@@ -1875,7 +1966,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                     child: Text(
                       'Done',
                       style: GoogleFonts.inter(
-                        color: Colors.blue.shade600,
+                        color: context.scheme.primary,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1901,8 +1992,10 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
                   setState(() {
                     if (isStart) {
                       _startTime = newTime;
+                      _showStartTimeError = false;
                     } else {
                       _endTime = newTime;
+                      _showEndTimeError = false;
                     }
                   });
                 },
@@ -1936,15 +2029,15 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.shade600 : Colors.white,
+          color: isSelected ? context.scheme.primary : context.scheme.surfaceContainer,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.blue.shade600 : Colors.blue.shade300,
+            color: isSelected ? context.scheme.primary : context.scheme.primary.withOpacity(0.4),
             width: 1.5,
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.3),
+              color: context.scheme.primary.withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -1955,7 +2048,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : Colors.blue.shade700,
+            color: isSelected ? Colors.white : context.scheme.primary,
           ),
         ),
       ),
@@ -1985,7 +2078,7 @@ class _ClassFormDialogState extends State<ClassFormDialog> {
               color: color,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isSelected ? Colors.grey.shade800 : Colors.grey.shade300,
+                color: isSelected ? context.scheme.onSurface : context.scheme.outlineVariant,
                 width: isSelected ? 3 : 1.5,
               ),
               boxShadow: [

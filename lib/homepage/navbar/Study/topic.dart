@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:app/homepage/navbar/Study/classtimer.dart';
+import 'package:app/theme/app_theme.dart';
 
 class TopicScreen extends StatefulWidget {
   final String classId;
@@ -65,8 +66,8 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
           left: 20,
           right: 20,
         ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.scheme.surfaceContainer,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -79,7 +80,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.scheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -92,7 +93,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 28 : 24,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: context.scheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -100,7 +101,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
               'Add a new topic to organize your study materials',
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 16 : 14,
-                color: Colors.grey[600],
+                color: context.scheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 32),
@@ -113,7 +114,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 labelText: 'Topic Title',
                 hintText: 'Enter topic name',
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: context.scheme.surfaceContainerHigh,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -139,7 +140,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 labelText: 'Description (Optional)',
                 hintText: 'Brief description of the topic',
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: context.scheme.surfaceContainerHigh,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -173,7 +174,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 16 : 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -244,7 +245,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 Text('Topic created successfully'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: context.colors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -262,7 +263,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 Text('Error creating topic'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -320,7 +321,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              style: TextButton.styleFrom(foregroundColor: context.colors.danger),
               child: Text('Delete'),
             ),
           ],
@@ -382,7 +383,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                   Text('Topic deleted successfully'),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: context.colors.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               margin: EdgeInsets.all(16),
@@ -402,7 +403,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                 Text('Error deleting topic: $e'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: EdgeInsets.all(16),
@@ -489,7 +490,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Cleaned up $deleteCount invalid documents'),
-              backgroundColor: Colors.green,
+              backgroundColor: context.colors.success,
             ),
           );
         }
@@ -499,7 +500,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Database is clean - no invalid documents found'),
-              backgroundColor: Colors.blue,
+              backgroundColor: context.scheme.primary,
             ),
           );
         }
@@ -510,7 +511,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error during cleanup: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
           ),
         );
       }
@@ -523,7 +524,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
     final isTablet = screenSize.width > 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: context.scheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -533,10 +534,10 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
               expandedHeight: isTablet ? 200 : 160,
               floating: false,
               pinned: true,
-              backgroundColor: Colors.white,
+              backgroundColor: context.scheme.surface,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+                icon: Icon(Icons.arrow_back_ios_new, color: context.scheme.onSurface),
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
@@ -545,14 +546,14 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                   onPressed: _toggleEditMode,
                   icon: Icon(
                     _isEditMode ? Icons.done : Icons.edit,
-                    color: _isEditMode ? Colors.green : Colors.grey[600],
+                    color: _isEditMode ? context.colors.success : context.scheme.onSurfaceVariant,
                   ),
                 ),
                 SizedBox(width: 8),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  color: Colors.white,
+                  color: context.scheme.surface,
                   padding: EdgeInsets.fromLTRB(
                     isTablet ? 24 : 20,
                     isTablet ? 100 : 80,
@@ -568,7 +569,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 32 : 28,
                           fontWeight: FontWeight.w800,
-                          color: Colors.black87,
+                          color: context.scheme.onSurface,
                           height: 1.1,
                         ),
                       ),
@@ -588,7 +589,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                             widget.classData['teacher'] ?? 'No teacher',
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 16 : 14,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -597,7 +598,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: context.scheme.outlineVariant,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -606,7 +607,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                             widget.classData['time'] ?? 'No time',
                             style: GoogleFonts.inter(
                               fontSize: isTablet ? 16 : 14,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -634,13 +635,13 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                       padding: EdgeInsets.all(isTablet ? 20 : 16),
                       margin: EdgeInsets.only(bottom: isTablet ? 20 : 16),
                       decoration: BoxDecoration(
-                        color: Colors.red[50],
+                        color: context.colors.danger.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.red[100]!),
+                        border: Border.all(color: context.colors.danger.withOpacity(0.3)),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          Icon(Icons.delete_outline, color: context.colors.danger, size: 20),
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -648,7 +649,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                               style: GoogleFonts.inter(
                                 fontSize: isTablet ? 16 : 14,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.red,
+                                color: context.colors.danger,
                               ),
                             ),
                           ),
@@ -675,7 +676,8 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                           child: _MinimalActionButton(
                             title: 'Add Topic',
                             icon: Icons.add,
-                            color: Colors.grey[800]!,
+                            color: context.scheme.surfaceContainerHighest,
+                            textColor: context.scheme.onSurface,
                             onTap: _showAddTopicDialog,
                             isTablet: isTablet,
                           ),
@@ -695,7 +697,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 24 : 20,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
+                          color: context.scheme.onSurface,
                         ),
                       ),
                       StreamBuilder<QuerySnapshot>(
@@ -738,7 +740,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                               vertical: isTablet ? 8 : 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: context.scheme.surfaceContainerHigh,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -746,7 +748,7 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                               style: GoogleFonts.inter(
                                 fontSize: isTablet ? 14 : 12,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
+                                color: context.scheme.onSurfaceVariant,
                               ),
                             ),
                           );
@@ -787,13 +789,13 @@ class _TopicScreenState extends State<TopicScreen> with TickerProviderStateMixin
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+                          Icon(Icons.error_outline, size: 48, color: context.scheme.onSurfaceVariant),
                           const SizedBox(height: 16),
                           Text(
                             'Error loading topics',
                             style: GoogleFonts.inter(
                               fontSize: 16,
-                              color: Colors.grey[600],
+                              color: context.scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -856,6 +858,7 @@ class _MinimalActionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
   final bool isTablet;
+  final Color? textColor;
 
   const _MinimalActionButton({
     required this.title,
@@ -863,10 +866,12 @@ class _MinimalActionButton extends StatelessWidget {
     required this.color,
     required this.onTap,
     required this.isTablet,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final fg = textColor ?? Colors.white;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -883,7 +888,7 @@ class _MinimalActionButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.white,
+              color: fg,
               size: isTablet ? 20 : 18,
             ),
             const SizedBox(width: 8),
@@ -892,7 +897,7 @@ class _MinimalActionButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 16 : 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: fg,
               ),
             ),
           ],
@@ -965,16 +970,16 @@ class _MinimalTopicCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(isTablet ? 20 : 16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isEditMode ? Colors.red[200]! : Colors.grey[100]!,
+              color: isEditMode ? context.colors.danger.withOpacity(0.4) : context.scheme.outlineVariant,
               width: isEditMode ? 2 : 1,
             ),
             // Add red tint when in edit mode
             boxShadow: isEditMode ? [
               BoxShadow(
-                color: Colors.red.withOpacity(0.1),
+                color: context.colors.danger.withOpacity(0.1),
                 blurRadius: 8,
                 offset: Offset(0, 2),
               ),
@@ -987,13 +992,13 @@ class _MinimalTopicCard extends StatelessWidget {
                 height: isTablet ? 48 : 40,
                 decoration: BoxDecoration(
                   color: isEditMode 
-                      ? Colors.red.withOpacity(0.1) 
+                      ? context.colors.danger.withOpacity(0.1) 
                       : classColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   isEditMode ? Icons.delete_outline : Icons.topic_outlined,
-                  color: isEditMode ? Colors.red : classColor,
+                  color: isEditMode ? context.colors.danger : classColor,
                   size: isTablet ? 24 : 20,
                 ),
               ),
@@ -1007,7 +1012,7 @@ class _MinimalTopicCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 18 : 16,
                         fontWeight: FontWeight.w600,
-                        color: isEditMode ? Colors.red[700] : Colors.black87,
+                        color: isEditMode ? context.colors.danger : context.scheme.onSurface,
                       ),
                     ),
                     if (topicData['description'] != null && 
@@ -1017,7 +1022,7 @@ class _MinimalTopicCard extends StatelessWidget {
                         topicData['description'],
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 14 : 12,
-                          color: Colors.grey[600],
+                          color: context.scheme.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1036,7 +1041,7 @@ class _MinimalTopicCard extends StatelessWidget {
                         vertical: isTablet ? 6 : 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: context.scheme.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1044,7 +1049,7 @@ class _MinimalTopicCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: isTablet ? 12 : 10,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          color: context.scheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -1052,7 +1057,7 @@ class _MinimalTopicCard extends StatelessWidget {
                   ],
                   Icon(
                     isEditMode ? Icons.remove_circle_outline : Icons.chevron_right,
-                    color: isEditMode ? Colors.red : Colors.grey[400],
+                    color: isEditMode ? context.colors.danger : context.scheme.onSurfaceVariant,
                     size: isTablet ? 20 : 18,
                   ),
                 ],
@@ -1087,13 +1092,13 @@ class _EmptyState extends StatelessWidget {
             width: isTablet ? 80 : 64,
             height: isTablet ? 80 : 64,
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: context.scheme.surfaceContainerHigh,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.topic_outlined,
               size: isTablet ? 40 : 32,
-              color: Colors.grey[400],
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: isTablet ? 24 : 20),
@@ -1102,7 +1107,7 @@ class _EmptyState extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: isTablet ? 24 : 20,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -1110,7 +1115,7 @@ class _EmptyState extends StatelessWidget {
             'Create your first topic to get started',
             style: GoogleFonts.inter(
               fontSize: isTablet ? 16 : 14,
-              color: Colors.grey[500],
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: isTablet ? 32 : 24),
@@ -1213,7 +1218,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                   Text('File added successfully'),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: context.colors.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               margin: const EdgeInsets.all(16),
@@ -1232,7 +1237,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 Text('Error adding file'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -1261,7 +1266,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 Text('Cannot open file'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -1291,7 +1296,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              style: TextButton.styleFrom(foregroundColor: context.colors.danger),
               child: Text('Delete'),
             ),
           ],
@@ -1336,7 +1341,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                   Text('File deleted successfully'),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: context.colors.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               margin: EdgeInsets.all(16),
@@ -1355,7 +1360,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 Text('Error deleting file'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: EdgeInsets.all(16),
@@ -1386,8 +1391,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
           left: 20,
           right: 20,
         ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.scheme.surfaceContainer,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -1400,7 +1405,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.scheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -1413,7 +1418,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 28 : 24,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: context.scheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -1421,7 +1426,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
               'Update the topic name and description',
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 16 : 14,
-                color: Colors.grey[600],
+                color: context.scheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 32),
@@ -1434,7 +1439,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 labelText: 'Topic Title',
                 hintText: 'Enter topic name',
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: context.scheme.surfaceContainerHigh,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -1460,7 +1465,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 labelText: 'Description (Optional)',
                 hintText: 'Brief description of the topic',
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: context.scheme.surfaceContainerHigh,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -1494,7 +1499,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                       style: GoogleFonts.inter(
                         fontSize: isTablet ? 16 : 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
+                        color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -1566,7 +1571,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 Text('Topic renamed successfully'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: context.colors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -1584,7 +1589,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                 Text('Error renaming topic'),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.danger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
@@ -1600,12 +1605,12 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
     final isTablet = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: context.scheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.scheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+          icon: Icon(Icons.arrow_back_ios_new, color: context.scheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -1616,14 +1621,14 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 18 : 16,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: context.scheme.onSurface,
               ),
             ),
             Text(
               widget.classTitle,
               style: GoogleFonts.inter(
                 fontSize: isTablet ? 14 : 12,
-                color: Colors.grey[600],
+                color: context.scheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -1637,7 +1642,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
             onPressed: _toggleEditMode,
             icon: Icon(
               _isEditMode ? Icons.done : Icons.edit,
-              color: _isEditMode ? Colors.green : Colors.grey[600],
+              color: _isEditMode ? context.colors.success : context.scheme.onSurfaceVariant,
             ),
           ),
           SizedBox(width: 8),
@@ -1664,6 +1669,16 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
             );
           }
 
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error loading files: ${snapshot.error}',
+                style: TextStyle(color: context.colors.danger),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(
               child: Column(
@@ -1673,13 +1688,13 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                     width: isTablet ? 80 : 64,
                     height: isTablet ? 80 : 64,
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: context.scheme.surfaceContainerHigh,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.insert_drive_file_outlined,
                       size: isTablet ? 40 : 32,
-                      color: Colors.grey[400],
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(height: isTablet ? 24 : 20),
@@ -1688,7 +1703,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                     style: GoogleFonts.inter(
                       fontSize: isTablet ? 24 : 20,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -1696,7 +1711,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                     'Add files to organize your study materials',
                     style: GoogleFonts.inter(
                       fontSize: isTablet ? 16 : 14,
-                      color: Colors.grey[500],
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(height: isTablet ? 32 : 24),
@@ -1745,27 +1760,27 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                     style: GoogleFonts.inter(
                       fontSize: isTablet ? 16 : 14,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: context.scheme.onSurface,
                     ),
                   ),
                   subtitle: Text(
                     _formatFileSize(fileData['size'] ?? 0),
                     style: GoogleFonts.inter(
                       fontSize: isTablet ? 14 : 12,
-                      color: Colors.grey[600],
+                      color: context.scheme.onSurfaceVariant,
                     ),
                   ),
                   trailing: _isEditMode 
                       ? IconButton(
                           onPressed: () => _deleteFile(doc.id, fileData['name']),
-                          icon: Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(Icons.delete, color: context.colors.danger),
                         )
-                      : Icon(Icons.chevron_right, color: Colors.grey[400]),
+                      : Icon(Icons.chevron_right, color: context.scheme.onSurfaceVariant),
                   onTap: _isEditMode ? null : () => _openFile(fileData['path']),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  tileColor: Colors.white,
+                  tileColor: context.scheme.surfaceContainer,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: isTablet ? 20 : 16,
                     vertical: isTablet ? 8 : 4,

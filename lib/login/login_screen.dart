@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'forget_password_screen.dart'; // ✅ Add this import
+import 'package:app/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function()? onTap;
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     final size = MediaQuery.of(context).size;
     
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: context.scheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade900,
+                              color: context.scheme.primary,
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: const Icon(
@@ -143,13 +144,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                           ),
                           const SizedBox(height: 32),
-                          const Text(
+                          Text(
                             'Welcome back',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w300,
-                              color: Colors.black87,
+                              color: context.scheme.onSurface,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -159,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey.shade600,
+                              color: context.scheme.onSurfaceVariant,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -182,14 +183,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             padding: const EdgeInsets.all(16),
                             margin: const EdgeInsets.only(bottom: 24),
                             decoration: BoxDecoration(
-                              color: Colors.red.shade50,
+                              color: context.colors.danger.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red.shade100),
+                              border: Border.all(color: context.colors.danger.withOpacity(0.3)),
                             ),
                             child: Text(
                               _errorMessage!,
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: context.colors.danger,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -213,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                              color: Colors.grey.shade500,
+                              color: context.scheme.onSurfaceVariant,
                               size: 20,
                             ),
                             onPressed: () {
@@ -245,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             child: Text(
                               'Forgot password?',
                               style: TextStyle(
-                                color: Colors.grey.shade700,
+                                color: context.scheme.onSurfaceVariant,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -277,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           Text(
                             "Don't have an account? ",
                             style: TextStyle(
-                              color: Colors.grey.shade600,
+                              color: context.scheme.onSurfaceVariant,
                               fontSize: 14,
                             ),
                           ),
@@ -286,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             child: Text(
                               'Sign up',
                               style: TextStyle(
-                                color: Colors.grey.shade900,
+                                color: context.scheme.primary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -334,15 +335,15 @@ class _MinimalTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: context.scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: context.scheme.outlineVariant),
           ),
           child: TextField(
             controller: controller,
@@ -381,7 +382,7 @@ class _MinimalButton extends StatelessWidget {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: onPressed != null ? Colors.grey.shade900 : Colors.grey.shade400,
+        color: onPressed != null ? context.scheme.primary : context.scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextButton(

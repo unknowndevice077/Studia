@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/theme/app_theme.dart';
 
 class NoteSubjectManager {
   Future<List<String>> fetchSubjects() async {
@@ -90,16 +91,16 @@ class NoteSubjectManager {
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.school_outlined, size: 48, color: Colors.grey),
+                        Icon(Icons.school_outlined, size: 48, color: context.scheme.onSurfaceVariant),
                         SizedBox(height: 16),
                         Text(
                           'No subjects found',
-                          style: GoogleFonts.inter(fontSize: 16, color: Colors.grey[600]),
+                          style: GoogleFonts.inter(fontSize: 16, color: context.scheme.onSurfaceVariant),
                         ),
                         SizedBox(height: 8),
                         Text(
                           'Create classes first to add subjects',
-                          style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[500]),
+                          style: GoogleFonts.inter(fontSize: 14, color: context.scheme.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -112,13 +113,13 @@ class NoteSubjectManager {
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return ListTile(
-                              leading: Icon(Icons.clear, color: Colors.grey[600]),
+                              leading: Icon(Icons.clear, color: context.scheme.onSurfaceVariant),
                               title: Text(
                                 'No Subject',
-                                style: GoogleFonts.inter(fontSize: 16, color: Colors.grey[600]),
+                                style: GoogleFonts.inter(fontSize: 16, color: context.scheme.onSurfaceVariant),
                               ),
                               trailing: selectedSubject == null
-                                  ? Icon(Icons.check, color: Colors.grey[600])
+                                  ? Icon(Icons.check, color: context.scheme.onSurfaceVariant)
                                   : null,
                               onTap: () {
                                 onSubjectSelected(null);
@@ -160,7 +161,7 @@ class NoteSubjectManager {
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Cancel',
-              style: GoogleFonts.inter(color: Colors.grey[600], fontWeight: FontWeight.w600),
+              style: GoogleFonts.inter(color: context.scheme.onSurfaceVariant, fontWeight: FontWeight.w600),
             ),
           ),
         ],

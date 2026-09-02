@@ -9,6 +9,7 @@ import 'image_widget.dart' as img_widget;
 import 'attachments.dart' as attach;
 import 'todo.dart';
 import 'notes.dart' show AddNoteScreen;
+import 'package:app/theme/app_theme.dart';
 
 class NoteUIComponents {
   final NoteDataManager _dataManager = NoteDataManager();
@@ -21,7 +22,7 @@ class NoteUIComponents {
     required VoidCallback onEditModeToggle,
   }) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       elevation: 0,
       title: Row(
         children: [
@@ -30,7 +31,7 @@ class NoteUIComponents {
               'Notes',
               style: GoogleFonts.dmSerifText(
                 fontSize: 24,
-                color: Colors.black,
+                color: context.scheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -39,49 +40,41 @@ class NoteUIComponents {
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.add, color: Colors.blue, size: 28),
+          icon: Icon(Icons.add, color: context.scheme.primary, size: 28),
           tooltip: "Add Note",
           onPressed: onAddNote,
         ),
         IconButton(
           icon: Icon(
             editMode ? Icons.close : Icons.edit,
-            color: Colors.blueGrey,
+            color: context.scheme.onSurfaceVariant,
             size: 24,
           ),
           tooltip: "Edit Notes",
           onPressed: onEditModeToggle,
         ),
         IconButton(
-          icon: Icon(Icons.checklist, color: Colors.blueGrey[400]),
+          icon: Icon(Icons.checklist, color: context.scheme.onSurfaceVariant),
           onPressed: () {
             try {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Scaffold(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
-                        : Colors.white,
+                    backgroundColor: context.scheme.surface,
                     appBar: AppBar(
-                      backgroundColor: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black
-                          : Colors.white,
+                      backgroundColor: context.scheme.surface,
                       elevation: 0,
                       title: Text(
                         'Todo Tasks',
                         style: GoogleFonts.dmSerifText(
                           fontSize: 20,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.blueGrey[900],
+                          color: context.scheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       iconTheme: IconThemeData(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
+                        color: context.scheme.onSurface,
                       ),
                     ),
                     body: const TodoManager(),
@@ -129,13 +122,13 @@ class NoteUIComponents {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.note_add, size: 64, color: Colors.grey[400]),
+                Icon(Icons.note_add, size: 64, color: context.scheme.onSurfaceVariant),
                 const SizedBox(height: 16),
                 Text(
                   'No notes yet',
                   style: GoogleFonts.inter(
                     fontSize: 18,
-                    color: Colors.grey[600],
+                    color: context.scheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -143,7 +136,7 @@ class NoteUIComponents {
                   'Tap + to create your first note',
                   style: GoogleFonts.inter(
                     fontSize: 14,
-                    color: Colors.grey[500],
+                    color: context.scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -172,7 +165,7 @@ class NoteUIComponents {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.scheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: classColor, width: 2.5),
                     boxShadow: [
@@ -223,7 +216,7 @@ class NoteUIComponents {
                                     style: GoogleFonts.dmSerifText(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blueGrey[900],
+                                      color: context.scheme.onSurface,
                                     ),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -268,7 +261,7 @@ class NoteUIComponents {
                                 content,
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
-                                  color: Colors.blueGrey[600],
+                                  color: context.scheme.onSurfaceVariant,
                                   height: 1.4,
                                 ),
                                 maxLines: 3,
@@ -278,13 +271,13 @@ class NoteUIComponents {
                             const SizedBox(height: 16),
                             Row(
                               children: [
-                                Icon(Icons.access_time, size: 14, color: Colors.grey[400]),
+                                Icon(Icons.access_time, size: 14, color: context.scheme.onSurfaceVariant),
                                 const SizedBox(width: 4),
                                 Text(
                                   _formatDateTime(updatedAt),
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
-                                    color: Colors.grey[500],
+                                    color: context.scheme.onSurfaceVariant,
                                   ),
                                 ),
                                 const Spacer(),
@@ -337,12 +330,12 @@ class NoteUIComponents {
     required bool isEditing, // <-- Add this line
   }) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.scheme.surface,
       appBar: AppBar(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: context.scheme.surface,
+        iconTheme: IconThemeData(color: context.scheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: onBack,
@@ -351,7 +344,7 @@ class NoteUIComponents {
           isEditing ? 'Edit Note' : 'Add Note',
           style: GoogleFonts.dmSerifText(
             fontSize: 24,
-            color: Colors.black,
+            color: context.scheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -360,7 +353,7 @@ class NoteUIComponents {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.menu_book, color: Colors.black, size: 28),
+                icon: Icon(Icons.menu_book, color: context.scheme.onSurface, size: 28),
                 tooltip: 'Select Subject',
                 onPressed: onSubjectSelection,
               ),
@@ -404,7 +397,7 @@ class NoteUIComponents {
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.check, color: Colors.black),
+            icon: Icon(Icons.check, color: context.scheme.onSurface),
             tooltip: 'Save & Close',
             onPressed: onSaveAndExit,
           ),
@@ -424,14 +417,14 @@ class NoteUIComponents {
                     style: GoogleFonts.inter(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: context.scheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Note Title...',
                       hintStyle: GoogleFonts.inter(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[400],
+                        color: context.scheme.onSurfaceVariant,
                       ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
@@ -449,14 +442,14 @@ class NoteUIComponents {
                     focusNode: contentFocusNode,
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      color: Colors.black87,
+                      color: context.scheme.onSurface,
                       height: 1.5,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Start Writing Your Note...',
                       hintStyle: GoogleFonts.inter(
                         fontSize: 16,
-                        color: Colors.grey[400],
+                        color: context.scheme.onSurfaceVariant,
                       ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
@@ -514,7 +507,7 @@ class NoteUIComponents {
   ) {
     final primaryColor = selectedSubject != null && selectedSubject.isNotEmpty
         ? _subjectManager.getSubjectColor(selectedSubject)
-        : Colors.blue.shade600;
+        : context.scheme.primary;
 
     return Container(
       margin: const EdgeInsets.only(top: 20),
@@ -555,13 +548,13 @@ class NoteUIComponents {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.image_outlined, size: 48, color: Colors.grey.shade400),
+                          Icon(Icons.image_outlined, size: 48, color: context.scheme.onSurfaceVariant),
                           const SizedBox(height: 8),
                           Text(
                             'No images added yet',
                             style: GoogleFonts.inter(
                               fontSize: 14,
-                              color: Colors.grey.shade500,
+                              color: context.scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -598,7 +591,7 @@ class NoteUIComponents {
   ) {
     final primaryColor = selectedSubject != null && selectedSubject.isNotEmpty
         ? _subjectManager.getSubjectColor(selectedSubject)
-        : Colors.purple.shade600;
+        : context.scheme.tertiary;
 
     return Container(
       margin: const EdgeInsets.only(top: 20),
@@ -648,12 +641,12 @@ class NoteUIComponents {
   ) {
     final primaryColor = selectedSubject != null && selectedSubject.isNotEmpty
         ? _subjectManager.getSubjectColor(selectedSubject)
-        : Colors.blue;
+        : context.scheme.primary;
 
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.scheme.surfaceContainer,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -662,7 +655,7 @@ class NoteUIComponents {
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: context.colors.shadow,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
