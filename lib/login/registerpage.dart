@@ -280,10 +280,10 @@ class _RegisterPageState extends State<RegisterPage>
                                   color: context.scheme.primary,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: Icon(
-                                  Icons.school_outlined,
-                                  color: Colors.white,
-                                  size: isVerySmallScreen ? 24 : 28,
+                                child: Image.asset(
+                                  'assets/images/app_logo_mark.png',
+                                  width: isVerySmallScreen ? 24 : 28,
+                                  height: isVerySmallScreen ? 24 : 28,
                                 ),
                               ),
                               SizedBox(height: isVerySmallScreen ? 20 : 32),

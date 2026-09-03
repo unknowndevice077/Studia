@@ -210,10 +210,10 @@ class _LoginScreenState extends State<LoginScreen>
                                 color: context.scheme.primary,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(
-                                Icons.school_outlined,
-                                color: Colors.white,
-                                size: 28,
+                              child: Image.asset(
+                                'assets/images/app_logo_mark.png',
+                                width: 28,
+                                height: 28,
                               ),
                             ),
                             const SizedBox(height: 32),
