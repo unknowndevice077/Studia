@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'forget_password_screen.dart'; // ✅ Add this import
@@ -123,6 +124,25 @@ class _LoginScreenState extends State<LoginScreen>
     });
 
     try {
+      if (kIsWeb) {
+        // The guest button is mainly reached from the portfolio's live
+        // demo, which runs this app inside a cross-origin iframe. Browsers
+        // increasingly block or partition IndexedDB for third-party
+        // iframes (Safari ITP, Chrome storage partitioning) — and that's
+        // exactly what Firebase Auth's default LOCAL persistence writes to
+        // on every sign-in. When that write fails, the SDK can throw a
+        // raw, unmapped error instead of a FirebaseAuthException, which is
+        // why this was falling through to the generic message below.
+        // In-memory persistence never touches storage, sidestepping the
+        // problem entirely — a guest session not surviving a page reload
+        // is a fine trade-off for a throwaway demo account.
+        try {
+          await FirebaseAuth.instance.setPersistence(Persistence.NONE);
+        } catch (_) {
+          // Unsupported in this environment — fall back to the SDK default.
+        }
+      }
+
       final userCredential = await FirebaseAuth.instance.signInAnonymously();
       final user = userCredential.user;
       if (user != null) {
@@ -132,6 +152,7 @@ class _LoginScreenState extends State<LoginScreen>
         }, SetOptions(merge: true));
       }
     } on FirebaseAuthException catch (e) {
+      if (kDebugMode) print('⚠️ Guest sign-in failed (${e.code}): ${e.message}');
       if (mounted) {
         setState(() {
           _errorMessage = e.code == 'operation-not-allowed'
@@ -140,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     } catch (e) {
+      if (kDebugMode) print('⚠️ Guest sign-in failed: $e');
       if (mounted) {
         setState(() {
           _errorMessage = 'Couldn\'t start a guest session. Please try again.';
